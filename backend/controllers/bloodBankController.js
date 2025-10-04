@@ -1,0 +1,164 @@
+const BloodBank = require('../models/BloodBank');
+
+// @desc    Update blood bank inventory
+// @route   PUT /api/bloodbanks/inventory
+// @access  Private/BloodBank
+exports.updateInventory = async (req, res) => {
+  try {
+    const { inventory } = req.body;
+
+    const bloodBank = await BloodBank.findById(req.user._id);
+
+    if (!bloodBank) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blood bank not found',
+      });
+    }
+
+    // Update inventory
+    bloodBank.inventory = inventory;
+    await bloodBank.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Inventory updated successfully',
+      bloodBank,
+    });
+  } catch (error) {
+    console.error('Update inventory error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating inventory',
+    });
+  }
+};
+
+// @desc    Get blood bank inventory
+// @route   GET /api/bloodbanks/:id/inventory
+// @access  Public
+exports.getInventory = async (req, res) => {
+  try {
+    const bloodBank = await BloodBank.findById(req.params.id).select(
+      'name city inventory'
+    );
+
+    if (!bloodBank) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blood bank not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      inventory: bloodBank.inventory,
+      bloodBank,
+    });
+  } catch (error) {
+    console.error('Get inventory error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching inventory',
+    });
+  }
+};
+
+// @desc    Get all approved blood banks
+// @route   GET /api/bloodbanks
+// @access  Public
+exports.getAllBloodBanks = async (req, res) => {
+  try {
+    const { city, bloodType } = req.query;
+
+    let query = { isApproved: true, isActive: true };
+
+    if (city) {
+      query.city = new RegExp(city, 'i');
+    }
+
+    let bloodBanks = await BloodBank.find(query).select('-password');
+
+    // Filter by blood type availability if specified
+    if (bloodType) {
+      bloodBanks = bloodBanks.filter((bank) => {
+        const bloodTypeInventory = bank.inventory.find(
+          (item) => item.bloodType === bloodType
+        );
+        return bloodTypeInventory && bloodTypeInventory.quantity > 0;
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: bloodBanks.length,
+      bloodBanks,
+    });
+  } catch (error) {
+    console.error('Get all blood banks error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching blood banks',
+    });
+  }
+};
+
+// @desc    Get blood bank profile
+// @route   GET /api/bloodbanks/profile
+// @access  Private/BloodBank
+exports.getProfile = async (req, res) => {
+  try {
+    const bloodBank = await BloodBank.findById(req.user._id).select(
+      '-password'
+    );
+
+    res.status(200).json({
+      success: true,
+      bloodBank,
+    });
+  } catch (error) {
+    console.error('Get profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching profile',
+    });
+  }
+};
+
+// @desc    Update blood bank profile
+// @route   PUT /api/bloodbanks/profile
+// @access  Private/BloodBank
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, phone, address, city } = req.body;
+
+    const bloodBank = await BloodBank.findById(req.user._id);
+
+    if (!bloodBank) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blood bank not found',
+      });
+    }
+
+    // Update fields
+    if (name) bloodBank.name = name;
+    if (phone) bloodBank.phone = phone;
+    if (address) bloodBank.address = address;
+    if (city) bloodBank.city = city;
+
+    await bloodBank.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      bloodBank,
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating profile',
+    });
+  }
+};

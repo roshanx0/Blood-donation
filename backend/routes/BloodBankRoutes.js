@@ -1,0 +1,24 @@
+const express = require('express');
+const router = express.Router();
+const {
+  updateInventory,
+  getInventory,
+  getAllBloodBanks,
+  getProfile,
+  updateProfile,
+} = require('../controllers/bloodBankController');
+const { protect, approvedBloodBankOnly } = require('../middleware/auth');
+
+// Public routes
+router.get('/', getAllBloodBanks);
+router.get('/:id/inventory', getInventory);
+
+// Protected routes (blood bank only)
+router.use(protect);
+router.use(approvedBloodBankOnly);
+
+router.get('/profile', getProfile);
+router.put('/profile', updateProfile);
+router.put('/inventory', updateInventory);
+
+module.exports = router;
