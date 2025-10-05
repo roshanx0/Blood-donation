@@ -1,39 +1,47 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { Toaster } from 'react-hot-toast';
-import { getCurrentUser } from './redux/slices/authSlice';
+import { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Toaster } from "react-hot-toast";
+import { getCurrentUser } from "./redux/slices/authSlice";
 
 // Layout
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
-import Home from './pages/Home';
+import Home from "./pages/Home";
 
 // Auth Pages
-import UserLogin from './pages/auth/UserLogin';
-import UserRegister from './pages/auth/UserRegister';
-import BloodBankLogin from './pages/auth/BloodBankLogin';
-import BloodBankRegister from './pages/auth/BloodBankRegister';
+import UserLogin from "./pages/auth/UserLogin";
+import UserRegister from "./pages/auth/UserRegister";
+import BloodBankLogin from "./pages/auth/BloodBankLogin";
+import BloodBankRegister from "./pages/auth/BloodBankRegister";
 
 // Dashboard Pages
-import UserDashboard from './pages/dashboard/UserDashboard';
-import AdminDashboard from './pages/dashboard/AdminDashboard';
-import BloodBankDashboard from './pages/dashboard/BloodBankDashboard';
+import UserDashboard from "./pages/dashboard/UserDashboard";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import BloodBankDashboard from "./pages/dashboard/BloodBankDashboard";
 
 // Request Pages
-import CreateRequest from './pages/requests/CreateRequest';
-import RequestList from './pages/requests/RequestList';
-import RequestDetail from './pages/requests/RequestDetail';
-import MyRequests from './pages/requests/MyRequests';
+import CreateRequest from "./pages/requests/CreateRequest";
+import RequestList from "./pages/requests/RequestList";
+import RequestDetail from "./pages/requests/RequestDetail";
+import MyRequests from "./pages/requests/MyRequests";
 
 // Blood Bank Pages
-import BloodBankList from './pages/bloodbanks/BloodBankList';
+import BloodBankList from "./pages/bloodbanks/BloodBankList";
 
 // Admin Pages
-import ManageUsers from './pages/admin/ManageUsers';
-import ManageBloodBanks from './pages/admin/ManageBloodBanks';
+import ManageUsers from "./pages/admin/ManageUsers";
+import ManageBloodBanks from "./pages/admin/ManageBloodBanks";
+
+// Other Pages
+import EligibilityCriteria from "./pages/EligibilityCriteria";
 
 function App() {
   const dispatch = useDispatch();
@@ -52,20 +60,20 @@ function App() {
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#fff',
-            color: '#363636',
-            fontWeight: '600',
+            background: "#fff",
+            color: "#363636",
+            fontWeight: "600",
           },
           success: {
             iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
+              primary: "#10b981",
+              secondary: "#fff",
             },
           },
           error: {
             iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+              primary: "#ef4444",
+              secondary: "#fff",
             },
           },
         }}
@@ -84,11 +92,14 @@ function App() {
           {/* Public Blood Bank List */}
           <Route path="/blood-banks" element={<BloodBankList />} />
 
+          {/* Eligibility Criteria */}
+          <Route path="/eligibility" element={<EligibilityCriteria />} />
+
           {/* Protected Routes - User Dashboard */}
           <Route
             path="/user/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['user']}>
+              <ProtectedRoute allowedRoles={["user"]}>
                 <UserDashboard />
               </ProtectedRoute>
             }
@@ -98,7 +109,7 @@ function App() {
           <Route
             path="/admin/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminDashboard />
               </ProtectedRoute>
             }
@@ -107,7 +118,7 @@ function App() {
           <Route
             path="/admin/users"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <ManageUsers />
               </ProtectedRoute>
             }
@@ -116,7 +127,7 @@ function App() {
           <Route
             path="/admin/blood-banks"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <ManageBloodBanks />
               </ProtectedRoute>
             }
@@ -126,7 +137,7 @@ function App() {
           <Route
             path="/bloodbank/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['bloodbank']}>
+              <ProtectedRoute allowedRoles={["bloodbank"]}>
                 <BloodBankDashboard />
               </ProtectedRoute>
             }

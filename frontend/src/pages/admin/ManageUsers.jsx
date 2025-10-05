@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getAllUsers } from '../../redux/slices/adminSlice';
-import { Search, User, Mail, Phone, MapPin, Droplet } from 'lucide-react';
-import Card from '../../components/Card';
-import BloodTypeBadge from '../../components/BloodTypeBadge';
-import Loader from '../../components/Loader';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllUsers } from "../../redux/slices/adminSlice";
+import { Search, User, Mail, Phone, MapPin, Droplet } from "lucide-react";
+import Card from "../../components/Card";
+import BloodTypeBadge from "../../components/BloodTypeBadge";
+import Loader from "../../components/Loader";
 
 const ManageUsers = () => {
   const { allUsers, isLoading } = useSelector((state) => state.admin);
   const dispatch = useDispatch();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterBloodType, setFilterBloodType] = useState('');
-  const [filterCity, setFilterCity] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterBloodType, setFilterBloodType] = useState("");
+  const [filterCity, setFilterCity] = useState("");
 
   useEffect(() => {
     dispatch(getAllUsers());
   }, [dispatch]);
 
-  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
   const filteredUsers = allUsers.filter((user) => {
     const matchesSearch =
@@ -30,8 +30,7 @@ const ManageUsers = () => {
       !filterBloodType || user.bloodType === filterBloodType;
 
     const matchesCity =
-      !filterCity ||
-      user.city.toLowerCase().includes(filterCity.toLowerCase());
+      !filterCity || user.city.toLowerCase().includes(filterCity.toLowerCase());
 
     return matchesSearch && matchesBloodType && matchesCity;
   });
@@ -100,7 +99,7 @@ const ManageUsers = () => {
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
@@ -108,7 +107,7 @@ const ManageUsers = () => {
                 placeholder="Search by name, email, or city..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-field pl-10"
+                className="input-field pl-11"
               />
             </div>
 
@@ -122,7 +121,7 @@ const ManageUsers = () => {
                   id="bloodType"
                   value={filterBloodType}
                   onChange={(e) => setFilterBloodType(e.target.value)}
-                  className="input-field"
+                  className="input-field pl-4"
                 >
                   <option value="">All Blood Types</option>
                   {bloodTypes.map((type) => (
@@ -141,7 +140,7 @@ const ManageUsers = () => {
                   id="city"
                   value={filterCity}
                   onChange={(e) => setFilterCity(e.target.value)}
-                  className="input-field"
+                  className="input-field pl-4"
                 >
                   <option value="">All Cities</option>
                   {cities.map((city) => (
@@ -158,9 +157,9 @@ const ManageUsers = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => {
-                    setSearchTerm('');
-                    setFilterBloodType('');
-                    setFilterCity('');
+                    setSearchTerm("");
+                    setFilterBloodType("");
+                    setFilterCity("");
                   }}
                   className="text-sm text-red-600 hover:text-red-700 font-semibold"
                 >
@@ -174,7 +173,7 @@ const ManageUsers = () => {
         {/* Results Count */}
         <div className="mb-4">
           <p className="text-gray-600">
-            Showing <strong>{filteredUsers.length}</strong> of{' '}
+            Showing <strong>{filteredUsers.length}</strong> of{" "}
             <strong>{allUsers.length}</strong> user(s)
           </p>
         </div>
@@ -195,7 +194,10 @@ const ManageUsers = () => {
         ) : (
           <div className="space-y-4">
             {filteredUsers.map((user) => (
-              <Card key={user._id} className="hover:shadow-xl transition-shadow">
+              <Card
+                key={user._id}
+                className="hover:shadow-xl transition-shadow"
+              >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                   <div className="flex items-start space-x-4 flex-1">
                     <BloodTypeBadge bloodType={user.bloodType} size="lg" />
@@ -205,7 +207,7 @@ const ManageUsers = () => {
                         <h3 className="text-xl font-bold text-gray-900">
                           {user.name}
                         </h3>
-                        {user.role === 'admin' && (
+                        {user.role === "admin" && (
                           <span className="badge badge-danger">Admin</span>
                         )}
                         {user.isActive ? (
@@ -237,7 +239,7 @@ const ManageUsers = () => {
                       </div>
 
                       <div className="mt-2 text-xs text-gray-500">
-                        Registered on{' '}
+                        Registered on{" "}
                         {new Date(user.createdAt).toLocaleDateString()}
                       </div>
                     </div>

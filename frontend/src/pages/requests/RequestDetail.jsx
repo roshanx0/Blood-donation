@@ -294,7 +294,7 @@ const RequestDetail = () => {
                   value={responseMessage}
                   onChange={(e) => setResponseMessage(e.target.value)}
                   rows="4"
-                  className="input-field"
+                  className="input-field pl-4"
                   placeholder="Enter your message to the requester..."
                   required
                 />

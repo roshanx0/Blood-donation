@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Droplet,
@@ -19,6 +20,25 @@ import {
 import Card from "../components/Card";
 
 const Home = () => {
+  const [selectedBloodType, setSelectedBloodType] = useState("A+");
+
+  const bloodCompatibility = {
+    "O-": {
+      donates: ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+      receives: ["O-"],
+    },
+    "O+": { donates: ["O+", "A+", "B+", "AB+"], receives: ["O-", "O+"] },
+    "A-": { donates: ["A-", "A+", "AB-", "AB+"], receives: ["O-", "A-"] },
+    "A+": { donates: ["A+", "AB+"], receives: ["O-", "O+", "A-", "A+"] },
+    "B-": { donates: ["B-", "B+", "AB-", "AB+"], receives: ["O-", "B-"] },
+    "B+": { donates: ["B+", "AB+"], receives: ["O-", "O+", "B-", "B+"] },
+    "AB-": { donates: ["AB-", "AB+"], receives: ["O-", "A-", "B-", "AB-"] },
+    "AB+": {
+      donates: ["AB+"],
+      receives: ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+    },
+  };
+
   const stats = [
     {
       icon: <Users className="h-6 w-6" />,
@@ -114,17 +134,24 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 dark:from-red-800 dark:via-red-900 dark:to-black text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
+      <section className="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-5"></div>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)",
+          }}
+        ></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10">
           <div className="max-w-3xl">
-            <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
               Save Lives Through
-              <span className="block text-red-200">Blood Donation</span>
+              <span className="block text-red-100 mt-2">Blood Donation</span>
             </h1>
 
-            <p className="text-xl lg:text-2xl text-red-100 mb-8 leading-relaxed">
+            <p className="text-lg lg:text-xl text-red-50 mb-8 leading-relaxed">
               Kerala's trusted platform connecting blood donors with those in
               need. Every donation saves up to 3 lives.
             </p>
@@ -132,7 +159,7 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/register/user"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-red-600 rounded-lg font-semibold text-lg hover:bg-red-50 transition-all shadow-lg hover:shadow-xl"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-red-600 rounded-xl font-semibold text-lg hover:bg-red-50 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               >
                 Register as Donor
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -140,7 +167,7 @@ const Home = () => {
 
               <Link
                 to="/blood-banks"
-                className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold text-lg hover:bg-white/10 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all"
               >
                 <Search className="mr-2 h-5 w-5" />
                 Find Blood Banks
@@ -151,18 +178,18 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white dark:bg-dark-900">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg mb-4">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-red-50 to-red-100 text-red-600 rounded-xl mb-4 shadow-sm">
                   {stat.icon}
                 </div>
-                <div className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
                   {stat.count}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                <div className="text-sm text-gray-700 font-semibold">
                   {stat.label}
                 </div>
               </div>
@@ -172,13 +199,13 @@ const Home = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-20 bg-gray-50 dark:bg-dark-950">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               How Can We Help You?
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
               Whether you want to donate or need blood, we make it simple and
               efficient
             </p>
@@ -187,14 +214,14 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((service, index) => (
               <Link key={index} to={service.link}>
-                <Card className="h-full hover:shadow-lg transition-all group">
-                  <div className="text-red-600 dark:text-red-400 mb-4 group-hover:scale-110 transition-transform">
+                <Card className="h-full transition-all group">
+                  <div className="text-red-600 mb-4 group-hover:scale-110 transition-transform">
                     {service.icon}
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">
                     {service.title}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <p className="text-sm text-gray-700 leading-relaxed font-medium">
                     {service.description}
                   </p>
                 </Card>
@@ -205,13 +232,13 @@ const Home = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-white dark:bg-dark-900">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Simple Process
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-gray-700">
               Get started in three easy steps
             </p>
           </div>
@@ -219,15 +246,13 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {process.map((step, index) => (
               <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-700 dark:to-red-800 text-white rounded-full text-2xl font-bold mb-4 shadow-lg">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-600 to-red-700 text-white rounded-2xl text-2xl font-bold mb-4 shadow-md">
                   {step.number}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {step.description}
-                </p>
+                <p className="text-gray-700 font-medium">{step.description}</p>
               </div>
             ))}
           </div>
@@ -235,13 +260,13 @@ const Home = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 bg-gray-50 dark:bg-dark-950">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Why Choose BloodLife?
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-gray-700">
               Trusted by thousands across Kerala
             </p>
           </div>
@@ -249,13 +274,13 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg mb-4">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-red-50 to-red-100 text-red-600 rounded-xl mb-4 shadow-sm">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed font-medium">
                   {feature.description}
                 </p>
               </div>
@@ -265,22 +290,22 @@ const Home = () => {
       </section>
 
       {/* Donation Impact */}
-      <section className="py-20 bg-white dark:bg-dark-900">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-red-600 to-red-700 dark:from-red-700 dark:to-red-900 rounded-2xl p-12 lg:p-16 text-white text-center">
+          <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-3xl p-12 lg:p-16 text-white text-center shadow-xl">
             <Heart className="h-16 w-16 mx-auto mb-6" />
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               One Donation Saves
             </h2>
             <div className="text-7xl lg:text-8xl font-bold mb-4">3</div>
             <p className="text-2xl lg:text-3xl text-red-100 mb-8">Lives</p>
-            <p className="text-lg text-red-100 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-red-50 mb-8 max-w-2xl mx-auto leading-relaxed">
               Every blood donation has the potential to save up to three lives.
               Your contribution makes a real difference.
             </p>
             <Link
               to="/register/user"
-              className="inline-flex items-center px-8 py-4 bg-white text-red-600 rounded-lg font-semibold text-lg hover:bg-red-50 transition-all"
+              className="inline-flex items-center px-8 py-4 bg-white text-red-600 rounded-xl font-semibold text-lg hover:bg-red-50 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               Start Saving Lives Today
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -290,26 +315,26 @@ const Home = () => {
       </section>
 
       {/* Eligibility Quick Info */}
-      <section className="py-20 bg-gray-50 dark:bg-dark-950">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Can You Donate?
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-gray-700">
               Basic eligibility requirements
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800">
+            <Card className="bg-green-50 border-green-300">
               <div className="flex items-start space-x-3">
-                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400 flex-shrink-0 mt-1" />
+                <CheckCircle2 className="h-6 w-6 text-green-700 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-bold text-gray-900 mb-3 text-lg">
                     Required
                   </h3>
-                  <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                  <ul className="space-y-2 text-sm text-gray-800 font-medium">
                     <li>• Age: 18-65 years</li>
                     <li>• Weight: Minimum 50 kg</li>
                     <li>• Good health condition</li>
@@ -319,14 +344,14 @@ const Home = () => {
               </div>
             </Card>
 
-            <Card className="bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800">
+            <Card className="bg-red-50 border-red-300">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-1" />
+                <AlertCircle className="h-6 w-6 text-red-700 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-bold text-gray-900 mb-3 text-lg">
                     Not Eligible If
                   </h3>
-                  <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                  <ul className="space-y-2 text-sm text-gray-800 font-medium">
                     <li>• Pregnant or breastfeeding</li>
                     <li>• Recent illness or surgery</li>
                     <li>• Certain medications</li>
@@ -339,19 +364,120 @@ const Home = () => {
 
           <div className="text-center mt-8">
             <Link
-              to="/register/user"
-              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-semibold"
+              to="/eligibility"
+              className="inline-flex items-center space-x-2 px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-all shadow-md hover:shadow-lg"
             >
-              Check Full Eligibility Criteria →
+              <span>Check Full Eligibility Criteria</span>
+              <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
         </div>
       </section>
 
+      {/* Blood Compatibility Checker */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Blood Type Compatibility
+            </h2>
+            <p className="text-gray-700">
+              Select your blood type to see compatibility
+            </p>
+          </div>
+
+          <Card className="bg-white">
+            {/* Blood Type Selector */}
+            <div className="mb-6">
+              <div className="grid grid-cols-4 gap-2 md:gap-3">
+                {Object.keys(bloodCompatibility).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setSelectedBloodType(type)}
+                    className={`py-3 px-2 rounded-lg border font-bold text-lg transition-all ${
+                      selectedBloodType === type
+                        ? "bg-red-600 text-white border-red-600"
+                        : "bg-white text-gray-700 border-gray-300 hover:border-red-400"
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Compatibility Results */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-200">
+              {/* Can Donate To */}
+              <div>
+                <h3 className="font-bold text-gray-900 mb-3">
+                  Can Donate To (
+                  {bloodCompatibility[selectedBloodType].donates.length})
+                </h3>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {Object.keys(bloodCompatibility).map((type) => (
+                    <div
+                      key={type}
+                      className={`py-2 px-1 rounded text-center font-semibold text-sm transition-all ${
+                        bloodCompatibility[selectedBloodType].donates.includes(
+                          type
+                        )
+                          ? "bg-red-600 text-white"
+                          : "bg-gray-100 text-gray-300"
+                      }`}
+                    >
+                      {type}
+                    </div>
+                  ))}
+                </div>
+
+                {selectedBloodType === "O-" && (
+                  <div className="mt-3 text-xs text-green-700 bg-green-50 px-3 py-2 rounded border border-green-200">
+                    ✓ Universal Donor
+                  </div>
+                )}
+              </div>
+
+              {/* Can Receive From */}
+              <div>
+                <h3 className="font-bold text-gray-900 mb-3">
+                  Can Receive From (
+                  {bloodCompatibility[selectedBloodType].receives.length})
+                </h3>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {Object.keys(bloodCompatibility).map((type) => (
+                    <div
+                      key={type}
+                      className={`py-2 px-1 rounded text-center font-semibold text-sm transition-all ${
+                        bloodCompatibility[selectedBloodType].receives.includes(
+                          type
+                        )
+                          ? "bg-red-600 text-white"
+                          : "bg-gray-100 text-gray-300"
+                      }`}
+                    >
+                      {type}
+                    </div>
+                  ))}
+                </div>
+
+                {selectedBloodType === "AB+" && (
+                  <div className="mt-3 text-xs text-green-700 bg-green-50 px-3 py-2 rounded border border-green-200">
+                    ✓ Universal Receiver
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
       {/* Emergency Contact */}
-      <section className="py-20 bg-white dark:bg-dark-900">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-red-600 to-red-700 dark:from-red-700 dark:to-red-900 rounded-2xl p-8 lg:p-12">
+          <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-8 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div className="text-white">
                 <div className="inline-flex items-center space-x-2 bg-white/20 px-4 py-2 rounded-full mb-4">
@@ -397,26 +523,26 @@ const Home = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gray-50 dark:bg-dark-950">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <Droplet className="h-16 w-16 text-red-600 dark:text-red-500 mx-auto mb-6" />
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <Droplet className="h-16 w-16 text-red-600 mx-auto mb-6" />
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Ready to Make a Difference?
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+          <p className="text-lg text-gray-700 mb-8 font-medium">
             Join thousands of donors saving lives across Kerala
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/register/user"
-              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold text-lg hover:from-red-700 hover:to-red-800 transition-all shadow-lg"
+              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold text-lg hover:from-red-700 hover:to-red-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               Register Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             <Link
               to="/requests"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white dark:bg-dark-800 text-red-600 dark:text-red-400 border-2 border-red-600 dark:border-red-500 rounded-lg font-semibold text-lg hover:bg-red-50 dark:hover:bg-dark-700 transition-all"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-red-600 border-2 border-red-600 rounded-lg font-semibold text-lg hover:bg-red-50 transition-all shadow-md hover:shadow-lg"
             >
               View Blood Requests
             </Link>

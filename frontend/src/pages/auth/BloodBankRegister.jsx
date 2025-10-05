@@ -101,29 +101,29 @@ const BloodBankRegister = () => {
 
   if (registrationSuccess) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-gray-50 flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center animate-slide-up">
           <div className="flex justify-center mb-6">
-            <div className="bg-green-100 p-4 rounded-full">
+            <div className="bg-green-100 p-4 rounded-2xl">
               <CheckCircle className="h-12 w-12 text-green-600" />
             </div>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
             Registration Submitted Successfully!
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-6 leading-relaxed">
             Your blood bank registration has been submitted. Our admin team will
             review and approve your application shortly.
           </p>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-blue-800">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+            <p className="text-sm text-blue-800 font-medium">
               You will receive a confirmation email once your account is
               approved.
             </p>
           </div>
           <Link
             to="/login/bloodbank"
-            className="inline-block px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-150"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-sm hover:shadow-md font-medium"
           >
             Go to Login
           </Link>
@@ -133,13 +133,13 @@ const BloodBankRegister = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto animate-slide-up">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-6">
-            <div className="bg-red-600 p-3 rounded-xl shadow-lg">
-              <Building2 className="h-10 w-10 text-white" />
+          <div className="flex justify-center mb-5">
+            <div className="bg-gradient-to-br from-red-600 to-red-700 p-4 rounded-2xl shadow-md">
+              <Building2 className="h-12 w-12 text-white" />
             </div>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -171,7 +171,7 @@ const BloodBankRegister = () => {
                 Blood Bank Name
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <Building2 className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
@@ -181,7 +181,7 @@ const BloodBankRegister = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-2.5 border ${
+                  className={`block w-full pl-11 pr-3 py-2.5 border ${
                     errors.name ? "border-red-500" : "border-gray-300"
                   } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                   placeholder="City Blood Bank"
@@ -202,7 +202,7 @@ const BloodBankRegister = () => {
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -212,7 +212,7 @@ const BloodBankRegister = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    className={`block w-full pl-11 pr-3 py-2.5 border ${
                       errors.email ? "border-red-500" : "border-gray-300"
                     } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="bloodbank@example.com"
@@ -231,7 +231,7 @@ const BloodBankRegister = () => {
                   Phone Number
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Phone className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -241,7 +241,7 @@ const BloodBankRegister = () => {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    className={`block w-full pl-11 pr-3 py-2.5 border ${
                       errors.phone ? "border-red-500" : "border-gray-300"
                     } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="1234567890"
@@ -262,7 +262,7 @@ const BloodBankRegister = () => {
                 Full Address
               </label>
               <div className="relative">
-                <div className="absolute top-3 left-0 pl-3 pointer-events-none">
+                <div className="absolute top-3 left-0 pl-3.5 pointer-events-none">
                   <MapPin className="h-5 w-5 text-gray-400" />
                 </div>
                 <textarea
@@ -272,7 +272,7 @@ const BloodBankRegister = () => {
                   rows="3"
                   value={formData.address}
                   onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-2.5 border ${
+                  className={`block w-full pl-11 pr-3 py-2.5 border ${
                     errors.address ? "border-red-500" : "border-gray-300"
                   } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150 resize-none`}
                   placeholder="123 Main Street, Building A"
@@ -293,7 +293,7 @@ const BloodBankRegister = () => {
                   City
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <MapPin className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -303,7 +303,7 @@ const BloodBankRegister = () => {
                     required
                     value={formData.city}
                     onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    className={`block w-full pl-11 pr-3 py-2.5 border ${
                       errors.city ? "border-red-500" : "border-gray-300"
                     } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="New York"
@@ -322,7 +322,7 @@ const BloodBankRegister = () => {
                   License Number
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <FileText className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -332,7 +332,7 @@ const BloodBankRegister = () => {
                     required
                     value={formData.licenseNumber}
                     onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    className={`block w-full pl-11 pr-3 py-2.5 border ${
                       errors.licenseNumber
                         ? "border-red-500"
                         : "border-gray-300"
@@ -358,7 +358,7 @@ const BloodBankRegister = () => {
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -368,7 +368,7 @@ const BloodBankRegister = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    className={`block w-full pl-11 pr-3 py-2.5 border ${
                       errors.password ? "border-red-500" : "border-gray-300"
                     } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="••••••••"
@@ -387,7 +387,7 @@ const BloodBankRegister = () => {
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -397,7 +397,7 @@ const BloodBankRegister = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    className={`block w-full pl-11 pr-3 py-2.5 border ${
                       errors.confirmPassword
                         ? "border-red-500"
                         : "border-gray-300"

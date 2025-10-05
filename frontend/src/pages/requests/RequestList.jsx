@@ -1,26 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { getAllRequests } from '../../redux/slices/requestSlice';
-import { Search, Filter, MapPin, Calendar, Phone } from 'lucide-react';
-import Card from '../../components/Card';
-import BloodTypeBadge from '../../components/BloodTypeBadge';
-import UrgencyBadge from '../../components/UrgencyBadge';
-import StatusBadge from '../../components/StatusBadge';
-import Loader from '../../components/Loader';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { getAllRequests } from "../../redux/slices/requestSlice";
+import { Search, Filter, MapPin, Calendar, Phone } from "lucide-react";
+import Card from "../../components/Card";
+import BloodTypeBadge from "../../components/BloodTypeBadge";
+import UrgencyBadge from "../../components/UrgencyBadge";
+import StatusBadge from "../../components/StatusBadge";
+import Loader from "../../components/Loader";
 
 const RequestList = () => {
   const { requests, isLoading } = useSelector((state) => state.requests);
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState({
-    bloodType: '',
-    city: '',
-    urgency: '',
-    status: 'pending',
+    bloodType: "",
+    city: "",
+    urgency: "",
+    status: "pending",
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     dispatch(getAllRequests(filters));
@@ -35,12 +35,12 @@ const RequestList = () => {
 
   const clearFilters = () => {
     setFilters({
-      bloodType: '',
-      city: '',
-      urgency: '',
-      status: 'pending',
+      bloodType: "",
+      city: "",
+      urgency: "",
+      status: "pending",
     });
-    setSearchTerm('');
+    setSearchTerm("");
   };
 
   const filteredRequests = requests.filter((request) => {
@@ -53,7 +53,7 @@ const RequestList = () => {
     return matchesSearch;
   });
 
-  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
   if (isLoading) {
     return <Loader fullScreen />;
@@ -77,7 +77,7 @@ const RequestList = () => {
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
@@ -85,7 +85,7 @@ const RequestList = () => {
                 placeholder="Search by patient name, city, or hospital..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-field pl-10"
+                className="input-field pl-11"
               />
             </div>
 
@@ -100,7 +100,7 @@ const RequestList = () => {
                   name="bloodType"
                   value={filters.bloodType}
                   onChange={handleFilterChange}
-                  className="input-field"
+                  className="input-field pl-4"
                 >
                   <option value="">All Blood Types</option>
                   {bloodTypes.map((type) => (
@@ -121,7 +121,7 @@ const RequestList = () => {
                   name="city"
                   value={filters.city}
                   onChange={handleFilterChange}
-                  className="input-field"
+                  className="input-field pl-4"
                   placeholder="Enter city"
                 />
               </div>
@@ -135,7 +135,7 @@ const RequestList = () => {
                   name="urgency"
                   value={filters.urgency}
                   onChange={handleFilterChange}
-                  className="input-field"
+                  className="input-field pl-4"
                 >
                   <option value="">All Urgencies</option>
                   <option value="low">Low</option>
@@ -154,7 +154,7 @@ const RequestList = () => {
                   name="status"
                   value={filters.status}
                   onChange={handleFilterChange}
-                  className="input-field"
+                  className="input-field pl-4"
                 >
                   <option value="">All Statuses</option>
                   <option value="pending">Pending</option>
@@ -235,7 +235,7 @@ const RequestList = () => {
                           <span>{request.contactNumber}</span>
                         </div>
                         <div>
-                          <span className="font-semibold">Quantity:</span>{' '}
+                          <span className="font-semibold">Quantity:</span>{" "}
                           {request.quantity} unit(s)
                         </div>
                       </div>
@@ -247,7 +247,7 @@ const RequestList = () => {
                       )}
 
                       <div className="mt-3 text-xs text-gray-500">
-                        Posted on{' '}
+                        Posted on{" "}
                         {new Date(request.createdAt).toLocaleDateString()}
                         {request.responses?.length > 0 && (
                           <span className="ml-3 text-green-600 font-semibold">

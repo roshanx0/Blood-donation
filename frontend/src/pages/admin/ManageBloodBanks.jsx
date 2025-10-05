@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getAllBloodBanks } from '../../redux/slices/adminSlice';
-import { Search, Building2, Mail, Phone, MapPin, FileText } from 'lucide-react';
-import Card from '../../components/Card';
-import Loader from '../../components/Loader';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllBloodBanks } from "../../redux/slices/adminSlice";
+import { Search, Building2, Mail, Phone, MapPin, FileText } from "lucide-react";
+import Card from "../../components/Card";
+import Loader from "../../components/Loader";
 
 const ManageBloodBanks = () => {
   const { allBloodBanks, isLoading } = useSelector((state) => state.admin);
   const dispatch = useDispatch();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCity, setFilterCity] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCity, setFilterCity] = useState("");
 
   useEffect(() => {
     dispatch(getAllBloodBanks());
@@ -24,8 +24,7 @@ const ManageBloodBanks = () => {
       bank.licenseNumber.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCity =
-      !filterCity ||
-      bank.city.toLowerCase().includes(filterCity.toLowerCase());
+      !filterCity || bank.city.toLowerCase().includes(filterCity.toLowerCase());
 
     return matchesSearch && matchesCity;
   });
@@ -94,7 +93,7 @@ const ManageBloodBanks = () => {
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
@@ -102,7 +101,7 @@ const ManageBloodBanks = () => {
                 placeholder="Search by name, email, city, or license number..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-field pl-10"
+                className="input-field pl-11"
               />
             </div>
 
@@ -115,7 +114,7 @@ const ManageBloodBanks = () => {
                 id="city"
                 value={filterCity}
                 onChange={(e) => setFilterCity(e.target.value)}
-                className="input-field"
+                className="input-field pl-4"
               >
                 <option value="">All Cities</option>
                 {cities.map((city) => (
@@ -131,8 +130,8 @@ const ManageBloodBanks = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => {
-                    setSearchTerm('');
-                    setFilterCity('');
+                    setSearchTerm("");
+                    setFilterCity("");
                   }}
                   className="text-sm text-red-600 hover:text-red-700 font-semibold"
                 >
@@ -146,7 +145,7 @@ const ManageBloodBanks = () => {
         {/* Results Count */}
         <div className="mb-4">
           <p className="text-gray-600">
-            Showing <strong>{filteredBloodBanks.length}</strong> of{' '}
+            Showing <strong>{filteredBloodBanks.length}</strong> of{" "}
             <strong>{allBloodBanks.length}</strong> blood bank(s)
           </p>
         </div>
@@ -167,7 +166,10 @@ const ManageBloodBanks = () => {
         ) : (
           <div className="space-y-4">
             {filteredBloodBanks.map((bank) => (
-              <Card key={bank._id} className="hover:shadow-xl transition-shadow">
+              <Card
+                key={bank._id}
+                className="hover:shadow-xl transition-shadow"
+              >
                 <div className="flex items-start space-x-4">
                   <div className="bg-gradient-to-r from-red-600 to-red-700 p-3 rounded-full flex-shrink-0">
                     <Building2 className="h-8 w-8 text-white" />
@@ -208,7 +210,7 @@ const ManageBloodBanks = () => {
                         <span>License: {bank.licenseNumber}</span>
                       </div>
                       <div className="md:col-span-2">
-                        <span className="font-semibold">Address:</span>{' '}
+                        <span className="font-semibold">Address:</span>{" "}
                         {bank.address}
                       </div>
                     </div>
@@ -225,8 +227,8 @@ const ManageBloodBanks = () => {
                               key={item.bloodType}
                               className={`px-3 py-1 rounded-lg text-xs font-semibold ${
                                 item.quantity > 0
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-red-100 text-red-800'
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
                               }`}
                             >
                               {item.bloodType}: {item.quantity} units
@@ -237,7 +239,7 @@ const ManageBloodBanks = () => {
                     )}
 
                     <div className="mt-3 text-xs text-gray-500">
-                      Registered on{' '}
+                      Registered on{" "}
                       {new Date(bank.createdAt).toLocaleDateString()}
                     </div>
                   </div>

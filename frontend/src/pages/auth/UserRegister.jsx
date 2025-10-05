@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../../redux/slices/authSlice';
-import { User, Mail, Lock, Phone, Droplet, MapPin } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../../redux/slices/authSlice";
+import { User, Mail, Lock, Phone, Droplet, MapPin } from "lucide-react";
 
 const UserRegister = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    bloodType: '',
-    city: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    bloodType: "",
+    city: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -23,11 +23,11 @@ const UserRegister = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/user/dashboard');
+      navigate("/user/dashboard");
     }
   }, [isAuthenticated, navigate]);
 
-  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
   const handleChange = (e) => {
     setFormData({
@@ -38,7 +38,7 @@ const UserRegister = () => {
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
-        [e.target.name]: '',
+        [e.target.name]: "",
       });
     }
   };
@@ -47,31 +47,31 @@ const UserRegister = () => {
     const newErrors = {};
 
     if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+      newErrors.name = "Name must be at least 2 characters";
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Invalid email address';
+      newErrors.email = "Invalid email address";
     }
 
     if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     if (!/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone = 'Phone number must be 10 digits';
+      newErrors.phone = "Phone number must be 10 digits";
     }
 
     if (!formData.bloodType) {
-      newErrors.bloodType = 'Please select your blood type';
+      newErrors.bloodType = "Please select your blood type";
     }
 
     if (formData.city.trim().length < 2) {
-      newErrors.city = 'Please enter your city';
+      newErrors.city = "Please enter your city";
     }
 
     setErrors(newErrors);
@@ -88,23 +88,25 @@ const UserRegister = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto animate-slide-up">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-full">
+          <div className="flex justify-center mb-5">
+            <div className="bg-gradient-to-br from-red-600 to-red-700 p-4 rounded-2xl shadow-md">
               <Droplet className="h-12 w-12 text-white" />
             </div>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Register as Donor
           </h2>
-          <p className="text-gray-600">Join our community of lifesavers</p>
+          <p className="text-gray-600 text-sm">
+            Join our community of lifesavers
+          </p>
         </div>
 
         {/* Register Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name */}
             <div>
@@ -112,7 +114,7 @@ const UserRegister = () => {
                 Full Name
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
@@ -122,8 +124,8 @@ const UserRegister = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className={`input-field pl-10 ${
-                    errors.name ? 'border-red-500' : ''
+                  className={`input-field pl-11 ${
+                    errors.name ? "border-red-500" : ""
                   }`}
                   placeholder="John Doe"
                 />
@@ -140,7 +142,7 @@ const UserRegister = () => {
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -150,8 +152,8 @@ const UserRegister = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.email ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.email ? "border-red-500" : ""
                     }`}
                     placeholder="john@example.com"
                   />
@@ -166,7 +168,7 @@ const UserRegister = () => {
                   Phone Number
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Phone className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -176,8 +178,8 @@ const UserRegister = () => {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.phone ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.phone ? "border-red-500" : ""
                     }`}
                     placeholder="1234567890"
                   />
@@ -195,7 +197,7 @@ const UserRegister = () => {
                   Blood Type
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Droplet className="h-5 w-5 text-gray-400" />
                   </div>
                   <select
@@ -204,8 +206,8 @@ const UserRegister = () => {
                     required
                     value={formData.bloodType}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.bloodType ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.bloodType ? "border-red-500" : ""
                     }`}
                   >
                     <option value="">Select Blood Type</option>
@@ -217,7 +219,9 @@ const UserRegister = () => {
                   </select>
                 </div>
                 {errors.bloodType && (
-                  <p className="mt-1 text-sm text-red-600">{errors.bloodType}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.bloodType}
+                  </p>
                 )}
               </div>
 
@@ -226,7 +230,7 @@ const UserRegister = () => {
                   City
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <MapPin className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -236,8 +240,8 @@ const UserRegister = () => {
                     required
                     value={formData.city}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.city ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.city ? "border-red-500" : ""
                     }`}
                     placeholder="New York"
                   />
@@ -255,7 +259,7 @@ const UserRegister = () => {
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -265,8 +269,8 @@ const UserRegister = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.password ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.password ? "border-red-500" : ""
                     }`}
                     placeholder="••••••••"
                   />
@@ -281,7 +285,7 @@ const UserRegister = () => {
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -291,8 +295,8 @@ const UserRegister = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.confirmPassword ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.confirmPassword ? "border-red-500" : ""
                     }`}
                     placeholder="••••••••"
                   />
@@ -317,17 +321,17 @@ const UserRegister = () => {
                   <span>Registering...</span>
                 </>
               ) : (
-                'Create Account'
+                "Create Account"
               )}
             </button>
           </form>
 
           {/* Links */}
-          <div className="mt-6 text-center text-sm text-gray-600">
-            Already have an account?{' '}
+          <div className="mt-6 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
+            Already have an account?{" "}
             <Link
               to="/login/user"
-              className="text-red-600 hover:text-red-700 font-semibold"
+              className="text-red-600 hover:text-red-700 font-medium transition-colors"
             >
               Sign in here
             </Link>

@@ -1,9 +1,16 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { createRequest } from '../../redux/slices/requestSlice';
-import { Droplet, User, Phone, MapPin, Building2, FileText } from 'lucide-react';
-import Card from '../../components/Card';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { createRequest } from "../../redux/slices/requestSlice";
+import {
+  Droplet,
+  User,
+  Phone,
+  MapPin,
+  Building2,
+  FileText,
+} from "lucide-react";
+import Card from "../../components/Card";
 
 const CreateRequest = () => {
   const { user, userType } = useSelector((state) => state.auth);
@@ -12,24 +19,24 @@ const CreateRequest = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    bloodType: '',
+    bloodType: "",
     quantity: 1,
-    urgency: 'medium',
-    city: user?.city || '',
-    hospital: '',
-    patientName: '',
-    contactNumber: user?.phone || '',
-    reason: '',
+    urgency: "medium",
+    city: user?.city || "",
+    hospital: "",
+    patientName: "",
+    contactNumber: user?.phone || "",
+    reason: "",
   });
 
   const [errors, setErrors] = useState({});
 
-  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const urgencyLevels = [
-    { value: 'low', label: 'Low', color: 'blue' },
-    { value: 'medium', label: 'Medium', color: 'yellow' },
-    { value: 'high', label: 'High', color: 'orange' },
-    { value: 'critical', label: 'Critical', color: 'red' },
+    { value: "low", label: "Low", color: "blue" },
+    { value: "medium", label: "Medium", color: "yellow" },
+    { value: "high", label: "High", color: "orange" },
+    { value: "critical", label: "Critical", color: "red" },
   ];
 
   const handleChange = (e) => {
@@ -40,7 +47,7 @@ const CreateRequest = () => {
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
-        [e.target.name]: '',
+        [e.target.name]: "",
       });
     }
   };
@@ -49,23 +56,23 @@ const CreateRequest = () => {
     const newErrors = {};
 
     if (!formData.bloodType) {
-      newErrors.bloodType = 'Please select blood type';
+      newErrors.bloodType = "Please select blood type";
     }
 
     if (formData.quantity < 1) {
-      newErrors.quantity = 'Quantity must be at least 1';
+      newErrors.quantity = "Quantity must be at least 1";
     }
 
     if (!formData.patientName.trim()) {
-      newErrors.patientName = 'Patient name is required';
+      newErrors.patientName = "Patient name is required";
     }
 
     if (!/^\d{10}$/.test(formData.contactNumber)) {
-      newErrors.contactNumber = 'Phone number must be 10 digits';
+      newErrors.contactNumber = "Phone number must be 10 digits";
     }
 
     if (!formData.city.trim()) {
-      newErrors.city = 'City is required';
+      newErrors.city = "City is required";
     }
 
     setErrors(newErrors);
@@ -77,30 +84,28 @@ const CreateRequest = () => {
 
     if (validateForm()) {
       const result = await dispatch(createRequest(formData));
-      if (result.type === 'requests/createRequest/fulfilled') {
+      if (result.type === "requests/createRequest/fulfilled") {
         navigate(
-          userType === 'bloodbank'
-            ? '/bloodbank/dashboard'
-            : '/user/dashboard'
+          userType === "bloodbank" ? "/bloodbank/dashboard" : "/user/dashboard"
         );
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto animate-slide-up">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-full">
+          <div className="flex justify-center mb-5">
+            <div className="bg-gradient-to-br from-red-600 to-red-700 p-4 rounded-2xl shadow-md">
               <Droplet className="h-12 w-12 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Create Blood Request
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm">
             Fill in the details to request blood donation
           </p>
         </div>
@@ -115,7 +120,7 @@ const CreateRequest = () => {
                   Blood Type <span className="text-red-600">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Droplet className="h-5 w-5 text-gray-400" />
                   </div>
                   <select
@@ -124,8 +129,8 @@ const CreateRequest = () => {
                     required
                     value={formData.bloodType}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.bloodType ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.bloodType ? "border-red-500" : ""
                     }`}
                   >
                     <option value="">Select Blood Type</option>
@@ -137,7 +142,9 @@ const CreateRequest = () => {
                   </select>
                 </div>
                 {errors.bloodType && (
-                  <p className="mt-1 text-sm text-red-600">{errors.bloodType}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.bloodType}
+                  </p>
                 )}
               </div>
 
@@ -153,8 +160,8 @@ const CreateRequest = () => {
                   required
                   value={formData.quantity}
                   onChange={handleChange}
-                  className={`input-field ${
-                    errors.quantity ? 'border-red-500' : ''
+                  className={`input-field pl-4 ${
+                    errors.quantity ? "border-red-500" : ""
                   }`}
                   placeholder="1"
                 />
@@ -170,34 +177,62 @@ const CreateRequest = () => {
                 Urgency Level <span className="text-red-600">*</span>
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {urgencyLevels.map((level) => (
-                  <label
-                    key={level.value}
-                    className={`relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      formData.urgency === level.value
-                        ? `border-${level.color}-500 bg-${level.color}-50`
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="urgency"
-                      value={level.value}
-                      checked={formData.urgency === level.value}
-                      onChange={handleChange}
-                      className="sr-only"
-                    />
-                    <span
-                      className={`font-semibold ${
-                        formData.urgency === level.value
-                          ? `text-${level.color}-700`
-                          : 'text-gray-700'
-                      }`}
+                {urgencyLevels.map((level) => {
+                  const isSelected = formData.urgency === level.value;
+                  const getStyles = () => {
+                    if (!isSelected)
+                      return "border-gray-300 hover:border-gray-400 bg-white";
+
+                    switch (level.value) {
+                      case "low":
+                        return "border-blue-500 bg-blue-50";
+                      case "medium":
+                        return "border-yellow-500 bg-yellow-50";
+                      case "high":
+                        return "border-orange-500 bg-orange-50";
+                      case "critical":
+                        return "border-red-500 bg-red-50 animate-pulse";
+                      default:
+                        return "border-gray-300 bg-white";
+                    }
+                  };
+
+                  const getTextColor = () => {
+                    if (!isSelected) return "text-gray-700";
+
+                    switch (level.value) {
+                      case "low":
+                        return "text-blue-700";
+                      case "medium":
+                        return "text-yellow-700";
+                      case "high":
+                        return "text-orange-700";
+                      case "critical":
+                        return "text-red-700";
+                      default:
+                        return "text-gray-700";
+                    }
+                  };
+
+                  return (
+                    <label
+                      key={level.value}
+                      className={`relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all ${getStyles()}`}
                     >
-                      {level.label}
-                    </span>
-                  </label>
-                ))}
+                      <input
+                        type="radio"
+                        name="urgency"
+                        value={level.value}
+                        checked={isSelected}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <span className={`font-bold ${getTextColor()}`}>
+                        {level.label}
+                      </span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
 
@@ -208,7 +243,7 @@ const CreateRequest = () => {
                   Patient Name <span className="text-red-600">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <User className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -218,8 +253,8 @@ const CreateRequest = () => {
                     required
                     value={formData.patientName}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.patientName ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.patientName ? "border-red-500" : ""
                     }`}
                     placeholder="John Doe"
                   />
@@ -236,7 +271,7 @@ const CreateRequest = () => {
                   Contact Number <span className="text-red-600">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Phone className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -246,8 +281,8 @@ const CreateRequest = () => {
                     required
                     value={formData.contactNumber}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.contactNumber ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.contactNumber ? "border-red-500" : ""
                     }`}
                     placeholder="1234567890"
                   />
@@ -267,7 +302,7 @@ const CreateRequest = () => {
                   City <span className="text-red-600">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <MapPin className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -277,8 +312,8 @@ const CreateRequest = () => {
                     required
                     value={formData.city}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.city ? 'border-red-500' : ''
+                    className={`input-field pl-11 ${
+                      errors.city ? "border-red-500" : ""
                     }`}
                     placeholder="New York"
                   />
@@ -293,7 +328,7 @@ const CreateRequest = () => {
                   Hospital (Optional)
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Building2 className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
@@ -302,7 +337,7 @@ const CreateRequest = () => {
                     name="hospital"
                     value={formData.hospital}
                     onChange={handleChange}
-                    className="input-field pl-10"
+                    className="input-field pl-11"
                     placeholder="City Hospital"
                   />
                 </div>
@@ -315,7 +350,7 @@ const CreateRequest = () => {
                 Reason / Additional Information (Optional)
               </label>
               <div className="relative">
-                <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                <div className="absolute top-3.5 left-0 pl-3.5 flex items-start pointer-events-none">
                   <FileText className="h-5 w-5 text-gray-400" />
                 </div>
                 <textarea
@@ -324,7 +359,7 @@ const CreateRequest = () => {
                   rows="4"
                   value={formData.reason}
                   onChange={handleChange}
-                  className="input-field pl-10"
+                  className="input-field pl-11 pt-3"
                   placeholder="Please provide any additional information that might help potential donors..."
                 />
               </div>
@@ -343,7 +378,7 @@ const CreateRequest = () => {
                     <span>Creating Request...</span>
                   </>
                 ) : (
-                  'Create Blood Request'
+                  "Create Blood Request"
                 )}
               </button>
               <button

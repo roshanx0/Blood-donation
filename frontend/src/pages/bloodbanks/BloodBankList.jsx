@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import { Search, Building2, Phone, Mail, MapPin, Droplet } from 'lucide-react';
-import Card from '../../components/Card';
-import Loader from '../../components/Loader';
-import axios from '../../utils/axios';
+import { useEffect, useState } from "react";
+import { Search, Building2, Phone, Mail, MapPin, Droplet } from "lucide-react";
+import Card from "../../components/Card";
+import Loader from "../../components/Loader";
+import axios from "../../utils/axios";
 
 const BloodBankList = () => {
   const [bloodBanks, setBloodBanks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedBloodType, setSelectedBloodType] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedBloodType, setSelectedBloodType] = useState("");
 
-  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
   useEffect(() => {
     fetchBloodBanks();
@@ -28,7 +28,7 @@ const BloodBankList = () => {
       const response = await axios.get(`/bloodbanks?${queryString}`);
       setBloodBanks(response.data.bloodBanks);
     } catch (error) {
-      console.error('Error fetching blood banks:', error);
+      console.error("Error fetching blood banks:", error);
     } finally {
       setIsLoading(false);
     }
@@ -54,13 +54,11 @@ const BloodBankList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-950 py-8">
+    <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Blood Banks
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Blood Banks</h1>
+          <p className="text-gray-700">
             Find blood banks in your area with real-time inventory
           </p>
         </div>
@@ -68,7 +66,7 @@ const BloodBankList = () => {
         <Card className="mb-8">
           <div className="space-y-4">
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
@@ -76,7 +74,7 @@ const BloodBankList = () => {
                 placeholder="Search by name, city, or address..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-field pl-10"
+                className="input-field pl-11"
               />
             </div>
 
@@ -89,7 +87,7 @@ const BloodBankList = () => {
                   id="city"
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  className="input-field"
+                  className="input-field pl-4"
                 >
                   <option value="">All Cities</option>
                   {cities.map((city) => (
@@ -108,7 +106,7 @@ const BloodBankList = () => {
                   id="bloodType"
                   value={selectedBloodType}
                   onChange={(e) => setSelectedBloodType(e.target.value)}
-                  className="input-field"
+                  className="input-field pl-4"
                 >
                   <option value="">All Blood Types</option>
                   {bloodTypes.map((type) => (
@@ -124,9 +122,9 @@ const BloodBankList = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => {
-                    setSelectedCity('');
-                    setSelectedBloodType('');
-                    setSearchTerm('');
+                    setSelectedCity("");
+                    setSelectedBloodType("");
+                    setSearchTerm("");
                   }}
                   className="text-sm text-red-600 hover:text-red-700 font-semibold"
                 >
@@ -138,8 +136,12 @@ const BloodBankList = () => {
         </Card>
 
         <div className="mb-4">
-          <p className="text-gray-600 dark:text-gray-400">
-            Showing <strong>{filteredBloodBanks.length}</strong> blood bank(s)
+          <p className="text-gray-700 font-medium">
+            Showing{" "}
+            <strong className="text-gray-900">
+              {filteredBloodBanks.length}
+            </strong>{" "}
+            blood bank(s)
           </p>
         </div>
 
@@ -148,17 +150,20 @@ const BloodBankList = () => {
             <div className="flex justify-center mb-4">
               <Building2 className="h-16 w-16 text-gray-400" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
               No Blood Banks Found
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-700">
               Try adjusting your filters or search criteria
             </p>
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-6">
             {filteredBloodBanks.map((bank) => (
-              <Card key={bank._id} className="hover:shadow-xl transition-shadow">
+              <Card
+                key={bank._id}
+                className="hover:shadow-xl transition-shadow"
+              >
                 <div className="flex flex-col lg:flex-row">
                   <div className="flex-1">
                     <div className="flex items-start space-x-4 mb-4">
@@ -166,30 +171,30 @@ const BloodBankList = () => {
                         <Building2 className="h-8 w-8 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
                           {bank.name}
                         </h3>
-                        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="space-y-2 text-sm text-gray-700">
                           <div className="flex items-center space-x-2">
-                            <MapPin className="h-4 w-4 flex-shrink-0" />
+                            <MapPin className="h-4 w-4 flex-shrink-0 text-gray-500" />
                             <span>
                               {bank.address}, {bank.city}
                             </span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Phone className="h-4 w-4 flex-shrink-0" />
+                            <Phone className="h-4 w-4 flex-shrink-0 text-gray-500" />
                             <a
                               href={`tel:${bank.phone}`}
-                              className="hover:text-red-600 dark:hover:text-red-400"
+                              className="hover:text-red-600 transition-colors"
                             >
                               {bank.phone}
                             </a>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Mail className="h-4 w-4 flex-shrink-0" />
+                            <Mail className="h-4 w-4 flex-shrink-0 text-gray-500" />
                             <a
                               href={`mailto:${bank.email}`}
-                              className="hover:text-red-600 dark:hover:text-red-400"
+                              className="hover:text-red-600 transition-colors"
                             >
                               {bank.email}
                             </a>
@@ -198,10 +203,10 @@ const BloodBankList = () => {
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-200 dark:border-dark-700 pt-4">
+                    <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center space-x-2 mb-3">
-                        <Droplet className="h-5 w-5 text-red-600 dark:text-red-500" />
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <Droplet className="h-5 w-5 text-red-600" />
+                        <h4 className="font-bold text-gray-900">
                           Available Blood Inventory
                         </h4>
                       </div>
@@ -211,23 +216,23 @@ const BloodBankList = () => {
                             key={item.bloodType}
                             className={`text-center p-3 rounded-lg border-2 transition-all ${
                               item.quantity > 0
-                                ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                                : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                                ? "bg-green-50 border-green-300"
+                                : "bg-red-50 border-red-300"
                             }`}
                           >
-                            <div className="font-bold text-lg text-gray-900 dark:text-white">
+                            <div className="font-bold text-lg text-gray-900 mb-1">
                               {item.bloodType}
                             </div>
                             <div
-                              className={`text-sm font-semibold ${
+                              className={`text-sm font-bold ${
                                 item.quantity > 0
-                                  ? 'text-green-600 dark:text-green-400'
-                                  : 'text-red-600 dark:text-red-400'
+                                  ? "text-green-700"
+                                  : "text-red-700"
                               }`}
                             >
                               {item.quantity > 0
                                 ? `${item.quantity} units`
-                                : 'Out of stock'}
+                                : "Out"}
                             </div>
                           </div>
                         ))}
