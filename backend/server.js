@@ -27,6 +27,10 @@ app.use(
   })
 );
 
+// Chatbot route
+app.use('/api/chatbot', require('./routes/chatbotRoutes'));
+
+
 // Mount routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
