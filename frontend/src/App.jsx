@@ -4,10 +4,25 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Toaster } from "react-hot-toast";
 import { getCurrentUser } from "./redux/slices/authSlice";
+
+// Scroll to top on route change (except for home page)
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Scroll to top for all pages except home
+    if (pathname !== "/") {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
+
+  return null;
+}
 
 // Layout
 import Layout from "./components/Layout";
@@ -78,7 +93,7 @@ function App() {
           },
         }}
       />
-
+      <ScrollToTop />
       <Routes>
         {/* Layout Wrapper */}
         <Route element={<Layout />}>
