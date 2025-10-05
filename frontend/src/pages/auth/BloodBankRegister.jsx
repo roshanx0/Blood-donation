@@ -1,19 +1,27 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { registerBloodBank } from '../../redux/slices/authSlice';
-import { Building2, Mail, Lock, Phone, MapPin, FileText } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerBloodBank } from "../../redux/slices/authSlice";
+import {
+  Building2,
+  Mail,
+  Lock,
+  Phone,
+  MapPin,
+  FileText,
+  CheckCircle,
+} from "lucide-react";
 
 const BloodBankRegister = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    address: '',
-    city: '',
-    licenseNumber: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    address: "",
+    city: "",
+    licenseNumber: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -28,11 +36,10 @@ const BloodBankRegister = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    // Clear error for this field
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
-        [e.target.name]: '',
+        [e.target.name]: "",
       });
     }
   };
@@ -41,35 +48,35 @@ const BloodBankRegister = () => {
     const newErrors = {};
 
     if (formData.name.trim().length < 3) {
-      newErrors.name = 'Blood bank name must be at least 3 characters';
+      newErrors.name = "Blood bank name must be at least 3 characters";
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Invalid email address';
+      newErrors.email = "Invalid email address";
     }
 
     if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     if (!/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone = 'Phone number must be 10 digits';
+      newErrors.phone = "Phone number must be 10 digits";
     }
 
     if (formData.address.trim().length < 5) {
-      newErrors.address = 'Please enter a valid address';
+      newErrors.address = "Please enter a valid address";
     }
 
     if (formData.city.trim().length < 2) {
-      newErrors.city = 'Please enter your city';
+      newErrors.city = "Please enter your city";
     }
 
     if (formData.licenseNumber.trim().length < 5) {
-      newErrors.licenseNumber = 'Please enter a valid license number';
+      newErrors.licenseNumber = "Please enter a valid license number";
     }
 
     setErrors(newErrors);
@@ -82,12 +89,11 @@ const BloodBankRegister = () => {
     if (validateForm()) {
       const { confirmPassword, ...bloodBankData } = formData;
       const result = await dispatch(registerBloodBank(bloodBankData));
-      
-      if (result.type === 'auth/registerBloodBank/fulfilled') {
+
+      if (result.type === "auth/registerBloodBank/fulfilled") {
         setRegistrationSuccess(true);
-        // Redirect after 3 seconds
         setTimeout(() => {
-          navigate('/login/bloodbank');
+          navigate("/login/bloodbank");
         }, 3000);
       }
     }
@@ -95,28 +101,29 @@ const BloodBankRegister = () => {
 
   if (registrationSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center animate-slide-up">
-          <div className="flex justify-center mb-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+          <div className="flex justify-center mb-6">
             <div className="bg-green-100 p-4 rounded-full">
-              <Building2 className="h-12 w-12 text-green-600" />
+              <CheckCircle className="h-12 w-12 text-green-600" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Registration Submitted!
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            Registration Submitted Successfully!
           </h2>
           <p className="text-gray-600 mb-6">
-            Your blood bank registration has been submitted successfully. Our admin
-            team will review and approve your application shortly.
+            Your blood bank registration has been submitted. Our admin team will
+            review and approve your application shortly.
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
-              You will receive a confirmation email once your account is approved.
+              You will receive a confirmation email once your account is
+              approved.
             </p>
           </div>
           <Link
             to="/login/bloodbank"
-            className="inline-block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all"
+            className="inline-block px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-150"
           >
             Go to Login
           </Link>
@@ -126,37 +133,41 @@ const BloodBankRegister = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto animate-slide-up">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-full">
-              <Building2 className="h-12 w-12 text-white" />
+          <div className="flex justify-center mb-6">
+            <div className="bg-red-600 p-3 rounded-xl shadow-lg">
+              <Building2 className="h-10 w-10 text-white" />
             </div>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Register Blood Bank
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm text-gray-600">
             Join our network of trusted blood banks
           </p>
         </div>
 
         {/* Register Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           {/* Info Alert */}
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              <strong>Important:</strong> Your registration will be reviewed by our
-              admin team. You will be able to login once approved.
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-sm text-amber-800">
+              <strong className="font-semibold">Important:</strong> Your
+              registration will be reviewed by our admin team. You will be able
+              to login once approved.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Blood Bank Name */}
             <div>
-              <label htmlFor="name" className="label">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Blood Bank Name
               </label>
               <div className="relative">
@@ -170,9 +181,9 @@ const BloodBankRegister = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className={`input-field pl-10 ${
-                    errors.name ? 'border-red-500' : ''
-                  }`}
+                  className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                   placeholder="City Blood Bank"
                 />
               </div>
@@ -184,7 +195,10 @@ const BloodBankRegister = () => {
             {/* Email & Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="email" className="label">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Email Address
                 </label>
                 <div className="relative">
@@ -198,9 +212,9 @@ const BloodBankRegister = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.email ? 'border-red-500' : ''
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                      errors.email ? "border-red-500" : "border-gray-300"
+                    } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="bloodbank@example.com"
                   />
                 </div>
@@ -210,7 +224,10 @@ const BloodBankRegister = () => {
               </div>
 
               <div>
-                <label htmlFor="phone" className="label">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Phone Number
                 </label>
                 <div className="relative">
@@ -224,9 +241,9 @@ const BloodBankRegister = () => {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.phone ? 'border-red-500' : ''
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                      errors.phone ? "border-red-500" : "border-gray-300"
+                    } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="1234567890"
                   />
                 </div>
@@ -238,11 +255,14 @@ const BloodBankRegister = () => {
 
             {/* Address */}
             <div>
-              <label htmlFor="address" className="label">
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Full Address
               </label>
               <div className="relative">
-                <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                <div className="absolute top-3 left-0 pl-3 pointer-events-none">
                   <MapPin className="h-5 w-5 text-gray-400" />
                 </div>
                 <textarea
@@ -252,9 +272,9 @@ const BloodBankRegister = () => {
                   rows="3"
                   value={formData.address}
                   onChange={handleChange}
-                  className={`input-field pl-10 ${
-                    errors.address ? 'border-red-500' : ''
-                  }`}
+                  className={`block w-full pl-10 pr-3 py-2.5 border ${
+                    errors.address ? "border-red-500" : "border-gray-300"
+                  } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150 resize-none`}
                   placeholder="123 Main Street, Building A"
                 />
               </div>
@@ -266,7 +286,10 @@ const BloodBankRegister = () => {
             {/* City & License Number */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="city" className="label">
+                <label
+                  htmlFor="city"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   City
                 </label>
                 <div className="relative">
@@ -280,9 +303,9 @@ const BloodBankRegister = () => {
                     required
                     value={formData.city}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.city ? 'border-red-500' : ''
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                      errors.city ? "border-red-500" : "border-gray-300"
+                    } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="New York"
                   />
                 </div>
@@ -292,7 +315,10 @@ const BloodBankRegister = () => {
               </div>
 
               <div>
-                <label htmlFor="licenseNumber" className="label">
+                <label
+                  htmlFor="licenseNumber"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   License Number
                 </label>
                 <div className="relative">
@@ -306,9 +332,11 @@ const BloodBankRegister = () => {
                     required
                     value={formData.licenseNumber}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.licenseNumber ? 'border-red-500' : ''
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                      errors.licenseNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="BB-12345-NY"
                   />
                 </div>
@@ -323,7 +351,10 @@ const BloodBankRegister = () => {
             {/* Password & Confirm Password */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="password" className="label">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -337,9 +368,9 @@ const BloodBankRegister = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.password ? 'border-red-500' : ''
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                      errors.password ? "border-red-500" : "border-gray-300"
+                    } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="••••••••"
                   />
                 </div>
@@ -349,7 +380,10 @@ const BloodBankRegister = () => {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="label">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -363,9 +397,11 @@ const BloodBankRegister = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`input-field pl-10 ${
-                      errors.confirmPassword ? 'border-red-500' : ''
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-2.5 border ${
+                      errors.confirmPassword
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-150`}
                     placeholder="••••••••"
                   />
                 </div>
@@ -381,30 +417,58 @@ const BloodBankRegister = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full btn-primary"
+              className="w-full mt-6 flex items-center justify-center px-4 py-2.5 border border-transparent rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
             >
               {isLoading ? (
                 <>
-                  <div className="spinner border-white border-t-transparent w-5 h-5 mr-2"></div>
-                  <span>Submitting Registration...</span>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span className="font-medium">
+                    Submitting Registration...
+                  </span>
                 </>
               ) : (
-                'Submit Registration'
+                <span className="font-medium">Submit Registration</span>
               )}
             </button>
           </form>
 
           {/* Links */}
-          <div className="mt-6 text-center text-sm text-gray-600">
-            Already registered?{' '}
-            <Link
-              to="/login/bloodbank"
-              className="text-red-600 hover:text-red-700 font-semibold"
-            >
-              Login here
-            </Link>
+          <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+            <p className="text-sm text-gray-600">
+              Already registered?{" "}
+              <Link
+                to="/login/bloodbank"
+                className="font-medium text-red-600 hover:text-red-700 transition duration-150"
+              >
+                Login here
+              </Link>
+            </p>
           </div>
         </div>
+
+        {/* Footer Note */}
+        <p className="text-center text-xs text-gray-500 mt-8">
+          By registering, you agree to our Terms of Service and Privacy Policy
+        </p>
       </div>
     </div>
   );
