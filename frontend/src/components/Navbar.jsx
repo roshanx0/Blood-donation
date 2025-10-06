@@ -2,7 +2,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
-import { Droplet, Menu, X, LogOut, User, LayoutDashboard } from "lucide-react";
+import {
+  Droplet,
+  Menu,
+  X,
+  LogOut,
+  User,
+  LayoutDashboard,
+  Building2,
+  ChevronDown,
+} from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -85,24 +94,109 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link
-                  to="/login/user"
-                  className="text-gray-700 hover:text-red-600 font-medium transition-colors"
-                >
-                  User Login
-                </Link>
-                <Link
-                  to="/login/bloodbank"
-                  className="text-gray-700 hover:text-red-600 font-medium transition-colors"
-                >
-                  Blood Bank Login
-                </Link>
-                <Link
-                  to="/register/user"
-                  className="px-5 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white font-medium rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-sm hover:shadow-md"
-                >
-                  Register
-                </Link>
+                {/* Login Dropdown */}
+                <div className="relative group">
+                  <button className="flex items-center space-x-1 px-4 py-2 text-gray-700 hover:text-red-600 font-medium transition-colors">
+                    <span>Login</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  <div className="absolute hidden group-hover:block right-0 mt-1 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
+                    <Link
+                      to="/login/user"
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors"
+                    >
+                      <User className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          Donor / Recipient
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Individual users
+                        </div>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/login/bloodbank"
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors"
+                    >
+                      <Droplet className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          Blood Bank
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Blood bank centers
+                        </div>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/login/organization"
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors"
+                    >
+                      <Building2 className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          Hospital / NGO / College
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Organize blood camps
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Register Dropdown */}
+                <div className="relative group">
+                  <button className="flex items-center space-x-1 px-5 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white font-medium rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-sm hover:shadow-md">
+                    <span>Register</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  <div className="absolute hidden group-hover:block right-0 mt-1 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
+                    <Link
+                      to="/register/user"
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors"
+                    >
+                      <User className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          As Donor
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Register to donate blood
+                        </div>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/register/bloodbank"
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors"
+                    >
+                      <Droplet className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          As Blood Bank
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Register blood bank
+                        </div>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/register/organization"
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors"
+                    >
+                      <Building2 className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          As Hospital/NGO/College
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Host blood donation camps
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
               </>
             )}
           </div>
@@ -176,27 +270,65 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link
-                  to="/login/user"
-                  onClick={toggleMenu}
-                  className="block px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                >
-                  User Login
-                </Link>
-                <Link
-                  to="/login/bloodbank"
-                  onClick={toggleMenu}
-                  className="block px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                >
-                  Blood Bank Login
-                </Link>
-                <Link
-                  to="/register/user"
-                  onClick={toggleMenu}
-                  className="block px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all text-center font-medium shadow-sm mt-2"
-                >
-                  Register
-                </Link>
+                <div className="mb-4">
+                  <p className="px-4 py-2 text-xs font-bold text-gray-600 uppercase">
+                    Login As
+                  </p>
+                  <Link
+                    to="/login/user"
+                    onClick={toggleMenu}
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>Donor / Recipient</span>
+                  </Link>
+                  <Link
+                    to="/login/bloodbank"
+                    onClick={toggleMenu}
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                  >
+                    <Droplet className="h-4 w-4" />
+                    <span>Blood Bank</span>
+                  </Link>
+                  <Link
+                    to="/login/organization"
+                    onClick={toggleMenu}
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                  >
+                    <Building2 className="h-4 w-4" />
+                    <span>Hospital / NGO / College</span>
+                  </Link>
+                </div>
+
+                <div>
+                  <p className="px-4 py-2 text-xs font-bold text-gray-600 uppercase">
+                    Register As
+                  </p>
+                  <Link
+                    to="/register/user"
+                    onClick={toggleMenu}
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>Donor</span>
+                  </Link>
+                  <Link
+                    to="/register/bloodbank"
+                    onClick={toggleMenu}
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                  >
+                    <Droplet className="h-4 w-4" />
+                    <span>Blood Bank</span>
+                  </Link>
+                  <Link
+                    to="/register/organization"
+                    onClick={toggleMenu}
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                  >
+                    <Building2 className="h-4 w-4" />
+                    <span>Hospital / NGO / College</span>
+                  </Link>
+                </div>
               </>
             )}
           </div>

@@ -28,14 +28,15 @@ app.use(
 );
 
 // Chatbot route
-app.use('/api/chatbot', require('./routes/chatbotRoutes'));
-
+app.use("/api/chatbot", require("./routes/chatbotRoutes"));
 
 // Mount routes
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/auth/organization", require("./routes/organizationRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/requests", require("./routes/requestRoutes"));
 app.use("/api/bloodbanks", require("./routes/BloodBankRoutes"));
+app.use("/api/camps", require("./routes/bloodCampRoutes"));
 
 // Health check route
 app.get("/api/health", (req, res) => {

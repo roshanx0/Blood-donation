@@ -36,11 +36,14 @@ import UserLogin from "./pages/auth/UserLogin";
 import UserRegister from "./pages/auth/UserRegister";
 import BloodBankLogin from "./pages/auth/BloodBankLogin";
 import BloodBankRegister from "./pages/auth/BloodBankRegister";
+import OrganizationLogin from "./pages/auth/OrganizationLogin";
+import OrganizationRegister from "./pages/auth/OrganizationRegister";
 
 // Dashboard Pages
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import BloodBankDashboard from "./pages/dashboard/BloodBankDashboard";
+import OrganizationDashboard from "./pages/dashboard/OrganizationDashboard";
 
 // Request Pages
 import CreateRequest from "./pages/requests/CreateRequest";
@@ -54,6 +57,13 @@ import BloodBankList from "./pages/bloodbanks/BloodBankList";
 // Admin Pages
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageBloodBanks from "./pages/admin/ManageBloodBanks";
+import ManageOrganizations from "./pages/admin/ManageOrganizations";
+import ManageCamps from "./pages/admin/ManageCamps";
+
+// Blood Camp Pages
+import BloodCampList from "./pages/camps/BloodCampList";
+import CreateBloodCamp from "./pages/camps/CreateBloodCamp";
+import BloodCampDetail from "./pages/camps/BloodCampDetail";
 
 // Other Pages
 import EligibilityCriteria from "./pages/EligibilityCriteria";
@@ -101,11 +111,20 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login/user" element={<UserLogin />} />
           <Route path="/login/bloodbank" element={<BloodBankLogin />} />
+          <Route path="/login/organization" element={<OrganizationLogin />} />
           <Route path="/register/user" element={<UserRegister />} />
           <Route path="/register/bloodbank" element={<BloodBankRegister />} />
+          <Route
+            path="/register/organization"
+            element={<OrganizationRegister />}
+          />
 
           {/* Public Blood Bank List */}
           <Route path="/blood-banks" element={<BloodBankList />} />
+
+          {/* Blood Camps - Public Routes */}
+          <Route path="/camps" element={<BloodCampList />} />
+          <Route path="/camps/:id" element={<BloodCampDetail />} />
 
           {/* Eligibility Criteria */}
           <Route path="/eligibility" element={<EligibilityCriteria />} />
@@ -148,12 +167,50 @@ function App() {
             }
           />
 
+          <Route
+            path="/admin/organizations"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <ManageOrganizations />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/camps"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <ManageCamps />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Protected Routes - Blood Bank Dashboard */}
           <Route
             path="/bloodbank/dashboard"
             element={
               <ProtectedRoute allowedRoles={["bloodbank"]}>
                 <BloodBankDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Protected Routes - Organization Dashboard */}
+          <Route
+            path="/organization/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["organization"]}>
+                <OrganizationDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Protected Routes - Organization (Create Blood Camps) */}
+          <Route
+            path="/camps/create"
+            element={
+              <ProtectedRoute allowedRoles={["organization"]}>
+                <CreateBloodCamp />
               </ProtectedRoute>
             }
           />

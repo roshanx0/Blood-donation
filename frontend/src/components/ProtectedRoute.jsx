@@ -1,8 +1,10 @@
-import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { isAuthenticated, userType, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, userType, user } = useSelector(
+    (state) => state.auth
+  );
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -10,14 +12,16 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   // Check if user has the required role
   if (allowedRoles && allowedRoles.length > 0) {
-    const userRole = user?.role === 'admin' ? 'admin' : userType;
-    
+    const userRole = user?.role === "admin" ? "admin" : userType;
+
     if (!allowedRoles.includes(userRole)) {
-      // Redirect to appropriate dashboard
-      if (userRole === 'admin') {
+      // Redirect to appropriate dashboard based on user type
+      if (userRole === "admin") {
         return <Navigate to="/admin/dashboard" replace />;
-      } else if (userRole === 'bloodbank') {
+      } else if (userRole === "bloodbank") {
         return <Navigate to="/bloodbank/dashboard" replace />;
+      } else if (userRole === "organization") {
+        return <Navigate to="/organization/dashboard" replace />;
       } else {
         return <Navigate to="/user/dashboard" replace />;
       }

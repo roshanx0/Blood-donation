@@ -16,6 +16,7 @@ import {
   Award,
   CheckCircle2,
   AlertCircle,
+  Calendar,
 } from "lucide-react";
 import Card from "../components/Card";
 
@@ -66,27 +67,44 @@ const Home = () => {
     {
       icon: <Search className="h-8 w-8" />,
       title: "Find Blood Banks",
-      description: "Search blood banks with real-time inventory across Kerala",
+      description: "Search blood banks with real-time inventory",
       link: "/blood-banks",
+      color: "red",
     },
     {
       icon: <Droplet className="h-8 w-8" />,
       title: "Request Blood",
-      description:
-        "Create urgent requests and notify matching donors instantly",
+      description: "Create urgent requests and notify matching donors",
       link: "/requests/create",
+      color: "red",
     },
     {
       icon: <Users className="h-8 w-8" />,
       title: "Register as Donor",
-      description: "Join our community and help save lives in your city",
+      description: "Join our community and help save lives",
       link: "/register/user",
+      color: "red",
+    },
+    {
+      icon: <Calendar className="h-8 w-8" />,
+      title: "View Blood Camps",
+      description: "Find and register for upcoming donation camps",
+      link: "/camps",
+      color: "green",
+    },
+    {
+      icon: <Calendar className="h-8 w-8" />,
+      title: "Register Blood Camp",
+      description: "Organize a blood donation drive in your area",
+      link: "/camps/create",
+      color: "purple",
     },
     {
       icon: <Building2 className="h-8 w-8" />,
       title: "Blood Bank Portal",
-      description: "Manage inventory and connect with donors efficiently",
+      description: "Manage inventory and connect with donors",
       link: "/register/bloodbank",
+      color: "red",
     },
   ];
 
@@ -211,11 +229,27 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, index) => (
               <Link key={index} to={service.link}>
-                <Card className="h-full transition-all group">
-                  <div className="text-red-600 mb-4 group-hover:scale-110 transition-transform">
+                <Card
+                  className={`h-full transition-all group hover:shadow-xl border-2 ${
+                    service.color === "purple"
+                      ? "hover:border-purple-400"
+                      : service.color === "green"
+                      ? "hover:border-green-400"
+                      : "hover:border-red-400"
+                  }`}
+                >
+                  <div
+                    className={`mb-4 group-hover:scale-110 transition-transform ${
+                      service.color === "purple"
+                        ? "text-purple-600"
+                        : service.color === "green"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
                     {service.icon}
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-3">

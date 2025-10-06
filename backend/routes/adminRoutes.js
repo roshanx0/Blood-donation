@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   getPendingBloodBanks,
@@ -7,18 +7,34 @@ const {
   getAllBloodBanks,
   getAllUsers,
   getDashboardStats,
-} = require('../controllers/adminController');
-const { protect, adminOnly } = require('../middleware/auth');
+  getAllOrganizations,
+  toggleOrganizationVerification,
+  deleteOrganization,
+  getAllCamps,
+  toggleCampApproval,
+  deleteCamp,
+} = require("../controllers/adminController");
+const { protect, adminOnly } = require("../middleware/auth");
 
 // All routes require authentication and admin role
 router.use(protect);
 router.use(adminOnly);
 
-router.get('/stats', getDashboardStats);
-router.get('/bloodbanks/pending', getPendingBloodBanks);
-router.get('/bloodbanks', getAllBloodBanks);
-router.put('/bloodbanks/:id/approve', approveBloodBank);
-router.delete('/bloodbanks/:id/reject', rejectBloodBank);
-router.get('/users', getAllUsers);
+router.get("/stats", getDashboardStats);
+router.get("/bloodbanks/pending", getPendingBloodBanks);
+router.get("/bloodbanks", getAllBloodBanks);
+router.put("/bloodbanks/:id/approve", approveBloodBank);
+router.delete("/bloodbanks/:id/reject", rejectBloodBank);
+router.get("/users", getAllUsers);
+
+// Organization routes
+router.get("/organizations", getAllOrganizations);
+router.put("/organizations/:id/verify", toggleOrganizationVerification);
+router.delete("/organizations/:id", deleteOrganization);
+
+// Blood camp routes
+router.get("/camps", getAllCamps);
+router.put("/camps/:id/approve", toggleCampApproval);
+router.delete("/camps/:id", deleteCamp);
 
 module.exports = router;

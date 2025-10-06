@@ -9,6 +9,7 @@ dotenv.config({ path: "./.env" });
 const User = require("./models/User");
 const BloodBank = require("./models/BloodBank");
 const Request = require("./models/Request");
+const Organization = require("./models/Organization");
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -464,6 +465,277 @@ const createBloodBanks = async () => {
   return createdBloodBanks;
 };
 
+// Create Organizations (Hospitals, NGOs, Colleges)
+const createOrganizations = async () => {
+  const hashedPassword = await hashPassword("organization123");
+
+  const organizations = [
+    // Verified Hospitals in Thrissur
+    {
+      name: "Jubilee Mission Medical College & Research Institute",
+      type: "hospital",
+      email: "admin@jubileemission.org",
+      password: hashedPassword,
+      phone: "9447123456",
+      address: "Jubilee Mission P.O., Thrissur",
+      city: "Thrissur",
+      registrationNumber: "HOSP-KL-TCR-001",
+      contactPerson: {
+        name: "Dr. Suresh Kumar",
+        designation: "Medical Superintendent",
+        phone: "9447123457",
+      },
+      established: new Date("1990-01-15"),
+      description:
+        "Premier multi-specialty hospital in Thrissur providing comprehensive healthcare services and conducting blood donation camps regularly.",
+      isVerified: true,
+    },
+    {
+      name: "Amala Institute of Medical Sciences",
+      type: "hospital",
+      email: "bloodcamp@amalahealth.org",
+      password: hashedPassword,
+      phone: "9447234567",
+      address: "Amala Nagar, Amalanagar P.O., Thrissur",
+      city: "Thrissur",
+      registrationNumber: "HOSP-KL-TCR-002",
+      contactPerson: {
+        name: "Dr. Radhika Menon",
+        designation: "Head of Blood Bank",
+        phone: "9447234568",
+      },
+      established: new Date("1978-06-01"),
+      description:
+        "A leading healthcare institution committed to patient care and community service through regular blood donation drives.",
+      isVerified: true,
+    },
+    {
+      name: "Elite Mission Hospital",
+      type: "hospital",
+      email: "info@elitemission.com",
+      password: hashedPassword,
+      phone: "9447345678",
+      address: "Mannuthy, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "HOSP-KL-TCR-003",
+      contactPerson: {
+        name: "Dr. Anoop Raj",
+        designation: "Director",
+        phone: "9447345679",
+      },
+      established: new Date("2005-03-20"),
+      description:
+        "Modern multi-specialty hospital organizing monthly blood donation camps in association with local blood banks.",
+      isVerified: false, // Pending verification
+    },
+
+    // Verified NGOs in Thrissur
+    {
+      name: "Thrissur Blood Donors' Association",
+      type: "ngo",
+      email: "contact@thrissurblooddonors.org",
+      password: hashedPassword,
+      phone: "9447456789",
+      address: "Round East, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "NGO-KL-TCR-001",
+      contactPerson: {
+        name: "Rajesh Varma",
+        designation: "President",
+        phone: "9447456790",
+      },
+      established: new Date("2010-08-15"),
+      description:
+        "Leading NGO dedicated to organizing voluntary blood donation camps across Thrissur district. Successfully conducted over 500 camps.",
+      isVerified: true,
+    },
+    {
+      name: "Kerala Voluntary Blood Donors Forum - Thrissur Chapter",
+      type: "ngo",
+      email: "thrissur@kvbdf.org",
+      password: hashedPassword,
+      phone: "9447567890",
+      address: "Shakthan Thampuran Road, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "NGO-KL-TCR-002",
+      contactPerson: {
+        name: "Priya Krishnan",
+        designation: "Chapter Coordinator",
+        phone: "9447567891",
+      },
+      established: new Date("2008-01-10"),
+      description:
+        "Part of state-wide network promoting voluntary blood donation. Organizes awareness programs and donation camps in educational institutions.",
+      isVerified: true,
+    },
+    {
+      name: "Life Savers Blood Donation Society",
+      type: "ngo",
+      email: "info@lifesavers.org",
+      password: hashedPassword,
+      phone: "9447678901",
+      address: "Punkunnam, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "NGO-KL-TCR-003",
+      contactPerson: {
+        name: "Mahesh Pillai",
+        designation: "Secretary",
+        phone: "9447678902",
+      },
+      established: new Date("2015-04-22"),
+      description:
+        "Youth-driven NGO focusing on creating awareness about blood donation in rural areas of Thrissur.",
+      isVerified: false, // Pending verification
+    },
+
+    // Colleges in Thrissur
+    {
+      name: "Government Engineering College Thrissur",
+      type: "college",
+      email: "nss@gectcr.ac.in",
+      password: hashedPassword,
+      phone: "9447789012",
+      address: "Thrissur - Palakkad Hwy, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "COL-KL-TCR-001",
+      contactPerson: {
+        name: "Prof. Sreekumar Nair",
+        designation: "NSS Program Officer",
+        phone: "9447789013",
+      },
+      established: new Date("1957-06-01"),
+      description:
+        "Premier engineering college conducting bi-annual blood donation camps through NSS unit. Over 500 students participate each year.",
+      isVerified: true,
+    },
+    {
+      name: "St. Thomas College Thrissur",
+      type: "college",
+      email: "bloodcamp@stthomas.ac.in",
+      password: hashedPassword,
+      phone: "9447890123",
+      address: "College Road, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "COL-KL-TCR-002",
+      contactPerson: {
+        name: "Dr. Latha Menon",
+        designation: "NCC Officer",
+        phone: "9447890124",
+      },
+      established: new Date("1889-10-01"),
+      description:
+        "Historic autonomous college with active blood donation culture. Organizes camps in association with District Blood Bank.",
+      isVerified: true,
+    },
+    {
+      name: "Kerala Institute of Medical Sciences College",
+      type: "college",
+      email: "admin@kims.edu.in",
+      password: hashedPassword,
+      phone: "9447901234",
+      address: "Ollur, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "COL-KL-TCR-003",
+      contactPerson: {
+        name: "Dr. Anita Raj",
+        designation: "Dean of Students",
+        phone: "9447901235",
+      },
+      established: new Date("2002-07-15"),
+      description:
+        "Medical college with strong focus on community healthcare. Student volunteers organize monthly blood donation drives.",
+      isVerified: false, // Pending verification
+    },
+    {
+      name: "Sree Kerala Varma College",
+      type: "college",
+      email: "nss@skvthrissur.ac.in",
+      password: hashedPassword,
+      phone: "9448012345",
+      address: "Kuruppam Road, Thrissur",
+      city: "Thrissur",
+      registrationNumber: "COL-KL-TCR-004",
+      contactPerson: {
+        name: "Prof. Deepak Kumar",
+        designation: "NSS Coordinator",
+        phone: "9448012346",
+      },
+      established: new Date("1866-11-01"),
+      description:
+        "One of the oldest colleges in Kerala. NSS volunteers actively participate in blood donation and awareness campaigns.",
+      isVerified: true,
+    },
+
+    // Organizations from nearby cities
+    {
+      name: "Ernakulam Medical Trust Hospital",
+      type: "hospital",
+      email: "blooddonation@medicaltrust.org",
+      password: hashedPassword,
+      phone: "9448123456",
+      address: "M.G. Road, Ernakulam",
+      city: "Ernakulam",
+      registrationNumber: "HOSP-KL-EKM-001",
+      contactPerson: {
+        name: "Dr. Vineeth Kumar",
+        designation: "Blood Bank In-charge",
+        phone: "9448123457",
+      },
+      established: new Date("1974-03-15"),
+      description:
+        "Leading private hospital in Ernakulam conducting regular blood donation camps.",
+      isVerified: true,
+    },
+    {
+      name: "Palakkad Youth Blood Donors Forum",
+      type: "ngo",
+      email: "palakkad@youthblood.org",
+      password: hashedPassword,
+      phone: "9448234567",
+      address: "Gandhi Nagar, Palakkad",
+      city: "Palakkad",
+      registrationNumber: "NGO-KL-PKD-001",
+      contactPerson: {
+        name: "Arun Menon",
+        designation: "Founder",
+        phone: "9448234568",
+      },
+      established: new Date("2012-09-05"),
+      description:
+        "Youth-led initiative promoting blood donation in Palakkad district.",
+      isVerified: true,
+    },
+  ];
+
+  const createdOrganizations = await Organization.insertMany(organizations);
+  console.log(`✅ Created ${createdOrganizations.length} organizations`);
+
+  // VERIFY all phone numbers are 10 digits
+  let phoneErrors = 0;
+  createdOrganizations.forEach((org) => {
+    if (org.phone.length !== 10) {
+      console.error(
+        `❌ Organization ${org.name} has invalid phone: ${org.phone} (${org.phone.length} digits)`
+      );
+      phoneErrors++;
+    }
+    if (org.contactPerson.phone.length !== 10) {
+      console.error(
+        `❌ Organization ${org.name} contact person has invalid phone: ${org.contactPerson.phone} (${org.contactPerson.phone.length} digits)`
+      );
+      phoneErrors++;
+    }
+  });
+
+  if (phoneErrors === 0) {
+    console.log("✅ All organization phone numbers verified: 10 digits");
+  } else {
+    console.error(`❌ Found ${phoneErrors} invalid phone numbers!`);
+  }
+
+  return createdOrganizations;
+};
+
 // Create Requests
 const createRequests = async (users, bloodBanks) => {
   const requests = [];
@@ -581,12 +853,14 @@ const seedDatabase = async () => {
     await User.deleteMany({});
     await BloodBank.deleteMany({});
     await Request.deleteMany({});
+    await Organization.deleteMany({});
     console.log("✅ Cleared existing data");
 
     // Create new data
     console.log("📝 Creating new data for Kerala region...");
     const users = await createUsers();
     const bloodBanks = await createBloodBanks();
+    const organizations = await createOrganizations();
     const requests = await createRequests(users, bloodBanks);
 
     console.log("\n🎉 Database seeded successfully with Kerala data!");
@@ -596,6 +870,18 @@ const seedDatabase = async () => {
     );
     console.log(
       `   - Blood Banks: ${bloodBanks.length} (Major Kerala hospitals)`
+    );
+    console.log(
+      `   - Organizations: ${organizations.length} (Hospitals: ${
+        organizations.filter((o) => o.type === "hospital").length
+      }, NGOs: ${
+        organizations.filter((o) => o.type === "ngo").length
+      }, Colleges: ${organizations.filter((o) => o.type === "college").length})`
+    );
+    console.log(
+      `   - Verified Organizations: ${
+        organizations.filter((o) => o.isVerified).length
+      } | Pending: ${organizations.filter((o) => !o.isVerified).length}`
     );
     console.log(`   - Blood Requests: ${requests.length}`);
     console.log("\n✅ ALL PHONE NUMBERS VERIFIED: Exactly 10 digits");
@@ -610,8 +896,18 @@ const seedDatabase = async () => {
     console.log("\n   🏥 Blood Bank (Thrissur):");
     console.log("   Email: contact@thrissurbloodbank.com");
     console.log("   Password: bloodbank123");
+    console.log("\n   🏢 Organization - Hospital (Verified):");
+    console.log("   Email: admin@jubileemission.org");
+    console.log("   Password: organization123");
+    console.log("\n   🤝 Organization - NGO (Verified):");
+    console.log("   Email: contact@thrissurblooddonors.org");
+    console.log("   Password: organization123");
+    console.log("\n   🎓 Organization - College (Verified):");
+    console.log("   Email: nss@gectcr.ac.in");
+    console.log("   Password: organization123");
     console.log("\n   📝 All users password: password123");
     console.log("   📝 All blood banks password: bloodbank123");
+    console.log("   📝 All organizations password: organization123");
 
     process.exit(0);
   } catch (error) {
