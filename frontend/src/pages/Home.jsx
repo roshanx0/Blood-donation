@@ -289,91 +289,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Donation Impact */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-3xl p-12 lg:p-16 text-white text-center shadow-xl">
-            <Heart className="h-16 w-16 mx-auto mb-6" />
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              One Donation Saves
-            </h2>
-            <div className="text-7xl lg:text-8xl font-bold mb-4">3</div>
-            <p className="text-2xl lg:text-3xl text-red-100 mb-8">Lives</p>
-            <p className="text-lg text-red-50 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Every blood donation has the potential to save up to three lives.
-              Your contribution makes a real difference.
-            </p>
-            <Link
-              to="/register/user"
-              className="inline-flex items-center px-8 py-4 bg-white text-red-600 rounded-xl font-semibold text-lg hover:bg-red-50 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-            >
-              Start Saving Lives Today
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Eligibility Quick Info */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Can You Donate?
-            </h2>
-            <p className="text-lg text-gray-700">
-              Basic eligibility requirements
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-green-50 border-green-300">
-              <div className="flex items-start space-x-3">
-                <CheckCircle2 className="h-6 w-6 text-green-700 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-bold text-gray-900 mb-3 text-lg">
-                    Required
-                  </h3>
-                  <ul className="space-y-2 text-sm text-gray-800 font-medium">
-                    <li>• Age: 18-65 years</li>
-                    <li>• Weight: Minimum 50 kg</li>
-                    <li>• Good health condition</li>
-                    <li>• Hemoglobin: 12.5 g/dL minimum</li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="bg-red-50 border-red-300">
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="h-6 w-6 text-red-700 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-bold text-gray-900 mb-3 text-lg">
-                    Not Eligible If
-                  </h3>
-                  <ul className="space-y-2 text-sm text-gray-800 font-medium">
-                    <li>• Pregnant or breastfeeding</li>
-                    <li>• Recent illness or surgery</li>
-                    <li>• Certain medications</li>
-                    <li>• Recent tattoo (wait 3 months)</li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="text-center mt-8">
-            <Link
-              to="/eligibility"
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-all shadow-md hover:shadow-lg"
-            >
-              <span>Check Full Eligibility Criteria</span>
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Blood Compatibility Checker */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -471,6 +386,91 @@ const Home = () => {
               </div>
             </div>
           </Card>
+        </div>
+      </section>
+
+      {/* Donation Impact */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-3xl p-12 lg:p-16 text-white text-center shadow-xl">
+            <Heart className="h-16 w-16 mx-auto mb-6" />
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              One Donation Saves
+            </h2>
+            <div className="text-7xl lg:text-8xl font-bold mb-4">3</div>
+            <p className="text-2xl lg:text-3xl text-red-100 mb-8">Lives</p>
+            <p className="text-lg text-red-50 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Every blood donation has the potential to save up to three lives.
+              Your contribution makes a real difference.
+            </p>
+            <Link
+              to="/register/user"
+              className="inline-flex items-center px-8 py-4 bg-white text-red-600 rounded-xl font-semibold text-lg hover:bg-red-50 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            >
+              Start Saving Lives Today
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Eligibility Quick Info */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Can You Donate?
+            </h2>
+            <p className="text-lg text-gray-700">
+              Basic eligibility requirements
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-green-50 border-green-300">
+              <div className="flex items-start space-x-3">
+                <CheckCircle2 className="h-6 w-6 text-green-700 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-bold text-gray-900 mb-3 text-lg">
+                    Required
+                  </h3>
+                  <ul className="space-y-2 text-sm text-gray-800 font-medium">
+                    <li>• Age: 18-65 years</li>
+                    <li>• Weight: Minimum 50 kg</li>
+                    <li>• Good health condition</li>
+                    <li>• Hemoglobin: 12.5 g/dL minimum</li>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="bg-red-50 border-red-300">
+              <div className="flex items-start space-x-3">
+                <AlertCircle className="h-6 w-6 text-red-700 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-bold text-gray-900 mb-3 text-lg">
+                    Not Eligible If
+                  </h3>
+                  <ul className="space-y-2 text-sm text-gray-800 font-medium">
+                    <li>• Pregnant or breastfeeding</li>
+                    <li>• Recent illness or surgery</li>
+                    <li>• Certain medications</li>
+                    <li>• Recent tattoo (wait 3 months)</li>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <div className="text-center mt-8">
+            <Link
+              to="/eligibility"
+              className="inline-flex items-center space-x-2 px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-all shadow-md hover:shadow-lg"
+            >
+              <span>Check Full Eligibility Criteria</span>
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </div>
         </div>
       </section>
 
