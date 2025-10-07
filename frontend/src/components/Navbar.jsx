@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   Building2,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -94,6 +95,22 @@ const Navbar = () => {
               </>
             ) : (
               <>
+                <Link
+                  to="/requests"
+                  className="text-gray-700 hover:text-red-600 font-medium transition-colors flex items-center space-x-1.5"
+                >
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Blood Requests</span>
+                </Link>
+
+                <Link
+                  to="/blood-banks"
+                  className="text-gray-700 hover:text-red-600 font-medium transition-colors flex items-center space-x-1.5"
+                >
+                  <Building2 className="h-4 w-4" />
+                  <span>Blood Banks</span>
+                </Link>
+
                 {/* Login Dropdown */}
                 <div className="relative group">
                   <button className="flex items-center space-x-1 px-4 py-2 text-gray-700 hover:text-red-600 font-medium transition-colors">
@@ -270,7 +287,25 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <div className="mb-4">
+                {/* Quick Links for non-authenticated users */}
+                <Link
+                  to="/requests"
+                  onClick={toggleMenu}
+                  className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                >
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Blood Requests</span>
+                </Link>
+                <Link
+                  to="/blood-banks"
+                  onClick={toggleMenu}
+                  className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                >
+                  <Building2 className="h-4 w-4" />
+                  <span>Blood Banks</span>
+                </Link>
+
+                <div className="mb-4 mt-4">
                   <p className="px-4 py-2 text-xs font-bold text-gray-600 uppercase">
                     Login As
                   </p>

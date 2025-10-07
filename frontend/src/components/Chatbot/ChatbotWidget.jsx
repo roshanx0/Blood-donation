@@ -20,10 +20,34 @@ const ChatbotWidget = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  // Auto-open chatbot for first-time visitors
+  useEffect(() => {
+    const hasSeenChatbot = localStorage.getItem("hasSeenChatbot");
+    if (!hasSeenChatbot) {
+      // Auto-open after 3 seconds
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+        localStorage.setItem("hasSeenChatbot", "true");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // Auto-hide welcome tooltip after 10 seconds
+  useEffect(() => {
+    if (showWelcome && !isOpen) {
+      const timer = setTimeout(() => {
+        setShowWelcome(false);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcome, isOpen]);
 
   // Load chat history from localStorage
   useEffect(() => {
@@ -171,24 +195,50 @@ const ChatbotWidget = () => {
       {/* Floating Chat Button */}
       <AnimatePresence>
         {!isOpen && (
-          <motion.button
+          <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              setIsOpen(true);
-              setHasNewMessage(false);
-            }}
-            className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-full shadow-2xl flex items-center justify-center hover:shadow-red-500/50 transition-all duration-300"
-            title="Open BloodBot Chat"
+            className="fixed bottom-6 right-6 z-50 flex flex-col items-end"
           >
-            <MessageCircle className="h-7 w-7 text-white" />
-            {hasNewMessage && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse border-2 border-white" />
-            )}
-          </motion.button>
+            {/* Tooltip/Label - Only show if showWelcome is true */}
+            <AnimatePresence>
+              {showWelcome && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.5 }}
+                  className="mb-3 mr-2 bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-red-200"
+                >
+                  <p className="text-sm font-semibold text-gray-800 flex items-center">
+                    <Sparkles className="h-4 w-4 mr-2 text-yellow-500" />
+                    Need help? Chat with our AI! 🤖
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Get instant answers about blood donation
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Chat Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => {
+                setIsOpen(true);
+                setHasNewMessage(false);
+              }}
+              className="w-16 h-16 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-full shadow-2xl flex items-center justify-center hover:shadow-red-500/50 transition-all duration-300"
+              title="Open BloodBot Chat"
+            >
+              <MessageCircle className="h-7 w-7 text-white" />
+              {hasNewMessage && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
+              )}
+            </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 

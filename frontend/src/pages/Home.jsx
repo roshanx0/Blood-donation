@@ -47,14 +47,14 @@ const Home = () => {
       label: "Active Donors",
     },
     {
+      icon: <AlertCircle className="h-6 w-6" />,
+      count: "5,000+",
+      label: "Requests Fulfilled",
+    },
+    {
       icon: <Building2 className="h-6 w-6" />,
       count: "500+",
       label: "Blood Banks",
-    },
-    {
-      icon: <Heart className="h-6 w-6" />,
-      count: "25,000+",
-      label: "Lives Saved",
     },
     {
       icon: <TrendingUp className="h-6 w-6" />,
@@ -135,17 +135,20 @@ const Home = () => {
     {
       number: "1",
       title: "Register",
-      description: "Sign up with your details",
+      description: "Create your account in minutes",
+      subtext: "Quick and secure signup",
     },
     {
       number: "2",
-      title: "Get Verified",
-      description: "Complete your profile",
+      title: "Take Action",
+      description: "Request blood or register as donor",
+      subtext: "Choose what you need",
     },
     {
       number: "3",
-      title: "Save Lives",
-      description: "Donate or request blood",
+      title: "Get Connected",
+      description: "Instant notifications to matching users",
+      subtext: "Real-time updates",
     },
   ];
 
@@ -165,30 +168,51 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-              Save Lives Through
-              <span className="block text-red-100 mt-2">Blood Donation</span>
+              Donate Blood. Request Blood.
+              <span className="block text-red-100 mt-2">
+                Save Lives Together.
+              </span>
             </h1>
 
             <p className="text-lg lg:text-xl text-red-50 mb-8 leading-relaxed">
               Kerala's trusted platform connecting blood donors with those in
-              need. Every donation saves up to 3 lives.
+              need. Whether you want to donate or need urgent blood, we're here
+              to help.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                to="/register/user"
+                to="/requests/create"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white text-red-600 rounded-xl font-semibold text-lg hover:bg-red-50 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               >
-                Register as Donor
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <AlertCircle className="mr-2 h-5 w-5" />
+                Request Blood
               </Link>
 
               <Link
-                to="/blood-banks"
+                to="/register/user"
                 className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all"
               >
-                <Search className="mr-2 h-5 w-5" />
+                <Heart className="mr-2 h-5 w-5" />
+                Become a Donor
+              </Link>
+            </div>
+
+            {/* Quick Links */}
+            <div className="mt-8 flex flex-wrap gap-4 text-sm">
+              <Link
+                to="/blood-banks"
+                className="text-red-100 hover:text-white underline-offset-4 hover:underline transition-colors"
+              >
+                <Search className="inline h-4 w-4 mr-1" />
                 Find Blood Banks
+              </Link>
+              <Link
+                to="/requests"
+                className="text-red-100 hover:text-white underline-offset-4 hover:underline transition-colors"
+              >
+                <Activity className="inline h-4 w-4 mr-1" />
+                View Active Requests
               </Link>
             </div>
           </div>
@@ -221,11 +245,11 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              How Can We Help You?
+              What Would You Like To Do?
             </h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Whether you want to donate or need blood, we make it simple and
-              efficient
+              Request urgent blood, donate to save lives, or organize blood
+              camps - everything you need in one place
             </p>
           </div>
 
@@ -265,15 +289,49 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Emergency CTA Banner */}
+      <section className="py-16 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="text-center lg:text-left">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+                Need Blood Urgently?
+              </h2>
+              <p className="text-lg text-red-50 max-w-2xl">
+                Create a blood request and instantly notify matching donors in
+                your area. Get connected with blood banks and verified donors
+                within minutes.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                to="/requests/create"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-red-600 rounded-xl font-semibold text-lg hover:bg-red-50 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <AlertCircle className="mr-2 h-5 w-5" />
+                Create Request
+              </Link>
+              <Link
+                to="/requests"
+                className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all whitespace-nowrap"
+              >
+                <Activity className="mr-2 h-5 w-5" />
+                View Requests
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Simple Process
+              How It Works
             </h2>
             <p className="text-lg text-gray-700">
-              Get started in three easy steps
+              For both donors and blood requesters
             </p>
           </div>
 
@@ -286,7 +344,10 @@ const Home = () => {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {step.title}
                 </h3>
-                <p className="text-gray-700 font-medium">{step.description}</p>
+                <p className="text-gray-700 font-medium mb-1">
+                  {step.description}
+                </p>
+                <p className="text-sm text-gray-500">{step.subtext}</p>
               </div>
             ))}
           </div>
