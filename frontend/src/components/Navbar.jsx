@@ -96,14 +96,6 @@ const Navbar = () => {
             ) : (
               <>
                 <Link
-                  to="/requests"
-                  className="text-gray-700 hover:text-red-600 font-medium transition-colors flex items-center space-x-1.5"
-                >
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Blood Requests</span>
-                </Link>
-
-                <Link
                   to="/blood-banks"
                   className="text-gray-700 hover:text-red-600 font-medium transition-colors flex items-center space-x-1.5"
                 >
@@ -288,14 +280,6 @@ const Navbar = () => {
             ) : (
               <>
                 {/* Quick Links for non-authenticated users */}
-                <Link
-                  to="/requests"
-                  onClick={toggleMenu}
-                  className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                >
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Blood Requests</span>
-                </Link>
                 <Link
                   to="/blood-banks"
                   onClick={toggleMenu}

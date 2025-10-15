@@ -16,11 +16,8 @@ const BloodBankLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isAuthenticated && userType === "bloodbank") {
-      navigate("/bloodbank/dashboard");
-    }
-  }, [isAuthenticated, userType, navigate]);
+  // Don't use useEffect for redirect - it causes issues
+  // Users can manually visit login page even if logged in
 
   const handleChange = (e) => {
     setFormData({
@@ -31,7 +28,12 @@ const BloodBankLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await dispatch(loginBloodBank(formData));
+    const result = await dispatch(loginBloodBank(formData));
+
+    // Only navigate if login was successful
+    if (result.type === "auth/loginBloodBank/fulfilled") {
+      navigate("/bloodbank/dashboard");
+    }
   };
 
   return (
