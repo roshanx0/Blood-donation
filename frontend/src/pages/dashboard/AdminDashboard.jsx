@@ -143,15 +143,15 @@ const AdminDashboard = () => {
               className="hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-xl shadow-lg">
-                  <BarChart3 className="h-8 w-8 text-white" />
+                <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-xl shadow-lg">
+                  <Building className="h-8 w-8 text-white" />
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-gray-900">
-                    {stats?.bloodTypeDistribution?.length || 0}
+                    {stats?.totalOrganizations || 0}
                   </div>
                   <div className="text-sm text-gray-600 font-medium">
-                    Blood Types
+                    Organizations
                   </div>
                 </div>
               </div>

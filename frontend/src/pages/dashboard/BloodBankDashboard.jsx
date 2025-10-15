@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { getMyRequests, getMatchingRequests } from '../../redux/slices/requestSlice';
-import axios from '../../utils/axios';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import {
+  getMyRequests,
+  getMatchingRequests,
+} from "../../redux/slices/requestSlice";
+import axios from "../../utils/axios";
 import {
   Droplet,
   Building2,
@@ -11,11 +14,16 @@ import {
   AlertCircle,
   TrendingUp,
   Bell,
-} from 'lucide-react';
-import Card from '../../components/Card';
-import BloodTypeBadge from '../../components/BloodTypeBadge';
-import Loader from '../../components/Loader';
-import toast from 'react-hot-toast';
+  FileText,
+  Save,
+  X,
+} from "lucide-react";
+import DashboardLayout from "../../components/DashboardLayout";
+import StatCard from "../../components/StatCard";
+import Card from "../../components/Card";
+import BloodTypeBadge from "../../components/BloodTypeBadge";
+import Loader from "../../components/Loader";
+import toast from "react-hot-toast";
 
 const BloodBankDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -39,7 +47,7 @@ const BloodBankDashboard = () => {
       const response = await axios.get(`/bloodbanks/${user._id}/inventory`);
       setInventory(response.data.inventory);
     } catch (error) {
-      console.error('Error fetching inventory:', error);
+      console.error("Error fetching inventory:", error);
     }
   };
 
@@ -56,11 +64,11 @@ const BloodBankDashboard = () => {
   const handleSaveInventory = async () => {
     setIsSaving(true);
     try {
-      await axios.put('/bloodbanks/inventory', { inventory });
-      toast.success('Inventory updated successfully!');
+      await axios.put("/bloodbanks/inventory", { inventory });
+      toast.success("Inventory updated successfully!");
       setIsEditMode(false);
     } catch (error) {
-      toast.error('Failed to update inventory');
+      toast.error("Failed to update inventory");
     } finally {
       setIsSaving(false);
     }
@@ -74,92 +82,74 @@ const BloodBankDashboard = () => {
   const lowStockItems = inventory.filter((item) => item.quantity < 5);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <DashboardLayout activeTab="overview" userType="bloodbank">
+      <div className="space-y-6">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
             {user?.name}
           </h1>
-          <p className="text-gray-600">Blood Bank Management Dashboard</p>
+          <p className="text-gray-600 text-lg">
+            Blood Bank Management Dashboard
+          </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card gradient className="text-center">
-            <div className="flex justify-center mb-3">
-              <div className="bg-gradient-to-r from-red-600 to-red-700 p-3 rounded-full">
-                <Droplet className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">
-              {totalUnits}
-            </div>
-            <div className="text-sm text-gray-600">Total Blood Units</div>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            icon={Droplet}
+            title="Total Blood Units"
+            value={totalUnits}
+            color="red"
+            subtitle="Available in stock"
+          />
 
-          <Card gradient className="text-center">
-            <div className="flex justify-center mb-3">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-3 rounded-full">
-                <Building2 className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">
-              {myRequests.length}
-            </div>
-            <div className="text-sm text-gray-600">My Requests</div>
-          </Card>
-
-          <Card gradient className="text-center">
-            <div className="flex justify-center mb-3">
-              <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 p-3 rounded-full">
-                <AlertCircle className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">
-              {lowStockItems.length}
-            </div>
-            <div className="text-sm text-gray-600">Low Stock Items</div>
-          </Card>
-
-          <Card gradient className="text-center">
-            <div className="flex justify-center mb-3">
-              <div className="bg-gradient-to-r from-green-600 to-green-700 p-3 rounded-full">
-                <Bell className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">
-              {matchingRequests.length}
-            </div>
-            <div className="text-sm text-gray-600">Requests in City</div>
-          </Card>
+          <StatCard
+            icon={FileText}
+            title="My Requests"
+            value={myRequests.length}
+            color="blue"
+            subtitle="Requests created"
+          />
+          <StatCard
+            icon={AlertCircle}
+            title="Low Stock Items"
+            value={lowStockItems.length}
+            color="yellow"
+            subtitle="Requires attention"
+          />
+          <StatCard
+            icon={Bell}
+            title="Requests in City"
+            value={matchingRequests.length}
+            color="green"
+            subtitle="In your area"
+          />
         </div>
 
         {/* Low Stock Alert */}
         {lowStockItems.length > 0 && (
-          <div className="mb-8">
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-              <div className="flex items-start">
-                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-yellow-800 font-semibold mb-1">
-                    Low Stock Alert
-                  </p>
-                  <p className="text-sm text-yellow-700">
-                    The following blood types are running low (less than 5 units):{' '}
-                    <strong>
-                      {lowStockItems.map((item) => item.bloodType).join(', ')}
-                    </strong>
-                  </p>
-                </div>
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+            <div className="flex items-start">
+              <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
+              <div>
+                <p className="text-sm text-yellow-800 font-semibold mb-1">
+                  Low Stock Alert
+                </p>
+                <p className="text-sm text-yellow-700">
+                  The following blood types are running low (less than 5 units):{" "}
+                  <strong>
+                    {lowStockItems.map((item) => item.bloodType).join(", ")}
+                  </strong>
+                </p>
               </div>
             </div>
           </div>
         )}
 
         {/* Blood Inventory */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+        <Card>
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 flex items-center">
               <Droplet className="h-6 w-6 text-red-600 mr-2" />
               Blood Inventory
@@ -177,25 +167,20 @@ const BloodBankDashboard = () => {
                 <button
                   onClick={handleSaveInventory}
                   disabled={isSaving}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
-                  {isSaving ? (
-                    <>
-                      <div className="spinner border-white border-t-transparent w-4 h-4"></div>
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <span>Save Changes</span>
-                  )}
+                  <Save className="h-4 w-4" />
+                  <span>{isSaving ? "Saving..." : "Save"}</span>
                 </button>
                 <button
                   onClick={() => {
                     setIsEditMode(false);
                     fetchInventory();
                   }}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
                 >
-                  Cancel
+                  <X className="h-4 w-4" />
+                  <span>Cancel</span>
                 </button>
               </div>
             )}
@@ -203,10 +188,12 @@ const BloodBankDashboard = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
             {inventory.map((item) => (
-              <Card
+              <div
                 key={item.bloodType}
-                className={`text-center ${
-                  item.quantity < 5 ? 'border-2 border-yellow-400' : ''
+                className={`bg-white rounded-lg p-4 border text-center ${
+                  item.quantity < 5
+                    ? "border-2 border-yellow-400"
+                    : "border-gray-200"
                 }`}
               >
                 <BloodTypeBadge bloodType={item.bloodType} size="md" />
@@ -233,19 +220,21 @@ const BloodBankDashboard = () => {
                     </span>
                   </div>
                 )}
-              </Card>
+              </div>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Quick Actions
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Link to="/requests/create">
               <Card className="text-center cursor-pointer hover:shadow-xl transition-shadow">
                 <div className="flex justify-center mb-3">
-                  <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-full">
+                  <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-xl shadow-md">
                     <Plus className="h-8 w-8 text-white" />
                   </div>
                 </div>
@@ -261,7 +250,7 @@ const BloodBankDashboard = () => {
             <Link to="/requests">
               <Card className="text-center cursor-pointer hover:shadow-xl transition-shadow">
                 <div className="flex justify-center mb-3">
-                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-full">
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-xl shadow-md">
                     <TrendingUp className="h-8 w-8 text-white" />
                   </div>
                 </div>
@@ -286,7 +275,7 @@ const BloodBankDashboard = () => {
               </h2>
               <Link
                 to="/requests"
-                className="text-red-600 hover:text-red-700 font-semibold"
+                className="text-red-600 hover:text-red-700 font-semibold text-sm"
               >
                 View All →
               </Link>
@@ -294,7 +283,10 @@ const BloodBankDashboard = () => {
 
             <div className="grid grid-cols-1 gap-4">
               {matchingRequests.slice(0, 3).map((request) => (
-                <Card key={request._id} className="hover:shadow-xl transition-shadow">
+                <Card
+                  key={request._id}
+                  className="hover:shadow-xl transition-shadow"
+                >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                     <div className="flex items-start space-x-4">
                       <BloodTypeBadge bloodType={request.bloodType} size="md" />
@@ -304,15 +296,15 @@ const BloodBankDashboard = () => {
                         </h3>
                         <div className="space-y-1 text-sm text-gray-600">
                           <div>
-                            <span className="font-semibold">Blood Type:</span>{' '}
+                            <span className="font-semibold">Blood Type:</span>{" "}
                             {request.bloodType}
                           </div>
                           <div>
-                            <span className="font-semibold">Quantity:</span>{' '}
+                            <span className="font-semibold">Quantity:</span>{" "}
                             {request.quantity} units
                           </div>
                           <div>
-                            <span className="font-semibold">Urgency:</span>{' '}
+                            <span className="font-semibold">Urgency:</span>{" "}
                             <span
                               className={`badge urgency-${request.urgency}`}
                             >
@@ -321,7 +313,7 @@ const BloodBankDashboard = () => {
                           </div>
                           {request.hospital && (
                             <div>
-                              <span className="font-semibold">Hospital:</span>{' '}
+                              <span className="font-semibold">Hospital:</span>{" "}
                               {request.hospital}
                             </div>
                           )}
@@ -357,7 +349,7 @@ const BloodBankDashboard = () => {
           </Card>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

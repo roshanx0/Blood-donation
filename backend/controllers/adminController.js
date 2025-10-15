@@ -1,5 +1,6 @@
 const BloodBank = require("../models/BloodBank");
 const User = require("../models/User");
+const Organization = require("../models/Organization");
 
 // @desc    Get all pending blood bank registrations
 // @route   GET /api/admin/bloodbanks/pending
@@ -140,6 +141,9 @@ exports.getDashboardStats = async (req, res) => {
     const pendingBloodBanks = await BloodBank.countDocuments({
       isApproved: false,
     });
+    const totalOrganizations = await Organization.countDocuments({
+      isVerified: true,
+    });
 
     // Get blood type distribution
     const bloodTypeDistribution = await User.aggregate([
@@ -157,6 +161,7 @@ exports.getDashboardStats = async (req, res) => {
         totalUsers,
         totalBloodBanks,
         pendingBloodBanks,
+        totalOrganizations,
         bloodTypeDistribution,
       },
     });
@@ -176,7 +181,6 @@ exports.getDashboardStats = async (req, res) => {
 // @access  Private/Admin
 exports.getAllOrganizations = async (req, res) => {
   try {
-    const Organization = require("../models/Organization");
     const organizations = await Organization.find().sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -198,7 +202,6 @@ exports.getAllOrganizations = async (req, res) => {
 // @access  Private/Admin
 exports.toggleOrganizationVerification = async (req, res) => {
   try {
-    const Organization = require("../models/Organization");
     const organization = await Organization.findById(req.params.id);
 
     if (!organization) {
@@ -232,7 +235,6 @@ exports.toggleOrganizationVerification = async (req, res) => {
 // @access  Private/Admin
 exports.deleteOrganization = async (req, res) => {
   try {
-    const Organization = require("../models/Organization");
     const organization = await Organization.findById(req.params.id);
 
     if (!organization) {

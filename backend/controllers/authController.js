@@ -1,6 +1,6 @@
-const User = require('../models/User');
-const BloodBank = require('../models/BloodBank');
-const { sendTokenResponse } = require('../utils/generateToken');
+const User = require("../models/User");
+const BloodBank = require("../models/BloodBank");
+const { sendTokenResponse } = require("../utils/generateToken");
 
 // @desc    Register user
 // @route   POST /api/auth/register/user
@@ -14,7 +14,7 @@ exports.registerUser = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'User with this email already exists',
+        message: "User with this email already exists",
       });
     }
 
@@ -28,12 +28,12 @@ exports.registerUser = async (req, res) => {
       city,
     });
 
-    sendTokenResponse(user, 201, res, 'User');
+    sendTokenResponse(user, 201, res, "User");
   } catch (error) {
-    console.error('Register user error:', error);
+    console.error("Register user error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Error registering user',
+      message: error.message || "Error registering user",
     });
   }
 };
@@ -54,7 +54,7 @@ exports.registerBloodBank = async (req, res) => {
     if (existingBloodBank) {
       return res.status(400).json({
         success: false,
-        message: 'Blood bank with this email or license number already exists',
+        message: "Blood bank with this email or license number already exists",
       });
     }
 
@@ -72,15 +72,14 @@ exports.registerBloodBank = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message:
-        'Blood bank registration submitted. Waiting for admin approval.',
+      message: "Blood bank registration submitted. Waiting for admin approval.",
       bloodBank,
     });
   } catch (error) {
-    console.error('Register blood bank error:', error);
+    console.error("Register blood bank error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Error registering blood bank',
+      message: error.message || "Error registering blood bank",
     });
   }
 };
@@ -96,17 +95,17 @@ exports.loginUser = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide email and password',
+        message: "Please provide email and password",
       });
     }
 
     // Find user and include password
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
@@ -114,7 +113,7 @@ exports.loginUser = async (req, res) => {
     if (!user.isActive) {
       return res.status(403).json({
         success: false,
-        message: 'Your account has been deactivated',
+        message: "Your account has been deactivated",
       });
     }
 
@@ -124,16 +123,16 @@ exports.loginUser = async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
-    sendTokenResponse(user, 200, res, 'User');
+    sendTokenResponse(user, 200, res, "User");
   } catch (error) {
-    console.error('Login user error:', error);
+    console.error("Login user error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error logging in',
+      message: "Error logging in",
     });
   }
 };
@@ -149,17 +148,17 @@ exports.loginBloodBank = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide email and password',
+        message: "Please provide email and password",
       });
     }
 
     // Find blood bank and include password
-    const bloodBank = await BloodBank.findOne({ email }).select('+password');
+    const bloodBank = await BloodBank.findOne({ email }).select("+password");
 
     if (!bloodBank) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
@@ -167,7 +166,7 @@ exports.loginBloodBank = async (req, res) => {
     if (!bloodBank.isActive) {
       return res.status(403).json({
         success: false,
-        message: 'Your account has been deactivated',
+        message: "Your account has been deactivated",
       });
     }
 
@@ -177,7 +176,7 @@ exports.loginBloodBank = async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
@@ -185,16 +184,16 @@ exports.loginBloodBank = async (req, res) => {
     if (!bloodBank.isApproved) {
       return res.status(403).json({
         success: false,
-        message: 'Your blood bank registration is pending admin approval',
+        message: "Your blood bank registration is pending admin approval",
       });
     }
 
-    sendTokenResponse(bloodBank, 200, res, 'BloodBank');
+    sendTokenResponse(bloodBank, 200, res, "BloodBank");
   } catch (error) {
-    console.error('Login blood bank error:', error);
+    console.error("Login blood bank error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error logging in',
+      message: "Error logging in",
     });
   }
 };
@@ -210,10 +209,143 @@ exports.getMe = async (req, res) => {
       userType: req.userType,
     });
   } catch (error) {
-    console.error('Get me error:', error);
+    console.error("Get me error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching user data',
+      message: "Error fetching user data",
+    });
+  }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userType = req.userType;
+
+    // Determine which model to use based on user type
+    let Model;
+    let allowedFields = [];
+
+    if (userType === "user") {
+      Model = User;
+      allowedFields = ["name", "phone", "city", "bloodType"];
+    } else if (userType === "bloodbank") {
+      Model = BloodBank;
+      allowedFields = ["name", "phone", "address", "city"];
+    } else if (userType === "organization") {
+      const Organization = require("../models/Organization");
+      Model = Organization;
+      allowedFields = [
+        "name",
+        "phone",
+        "address",
+        "city",
+        "description",
+        "contactPerson",
+      ];
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user type",
+      });
+    }
+
+    // Filter only allowed fields
+    const updateData = {};
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    });
+
+    // Update user
+    const updatedUser = await Model.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Error updating profile",
+    });
+  }
+};
+
+// @desc    Get donation history
+// @route   GET /api/auth/donation-history
+// @access  Private (Users only)
+exports.getDonationHistory = async (req, res) => {
+  try {
+    const DonationHistory = require("../models/DonationHistory");
+
+    // Get donation history for the user
+    const donations = await DonationHistory.find({ userId: req.user._id })
+      .sort({ date: -1 })
+      .populate("campId", "name")
+      .populate("bloodBankId", "name");
+
+    res.status(200).json({
+      success: true,
+      count: donations.length,
+      donations,
+    });
+  } catch (error) {
+    console.error("Get donation history error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching donation history",
+    });
+  }
+};
+
+// @desc    Add donation record
+// @route   POST /api/auth/donation-history
+// @access  Private (Users only)
+exports.addDonationRecord = async (req, res) => {
+  try {
+    const DonationHistory = require("../models/DonationHistory");
+    const { location, date, quantity, bloodType, notes, campId, bloodBankId } =
+      req.body;
+
+    const donation = await DonationHistory.create({
+      userId: req.user._id,
+      location,
+      date: date || Date.now(),
+      quantity: quantity || 450,
+      bloodType: bloodType || req.user.bloodType,
+      notes,
+      campId,
+      bloodBankId,
+      status: "completed",
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Donation record added successfully",
+      donation,
+    });
+  } catch (error) {
+    console.error("Add donation record error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Error adding donation record",
     });
   }
 };
@@ -223,20 +355,20 @@ exports.getMe = async (req, res) => {
 // @access  Private
 exports.logout = async (req, res) => {
   try {
-    res.cookie('token', 'none', {
+    res.cookie("token", "none", {
       expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true,
     });
 
     res.status(200).json({
       success: true,
-      message: 'Logged out successfully',
+      message: "Logged out successfully",
     });
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error("Logout error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error logging out',
+      message: "Error logging out",
     });
   }
 };

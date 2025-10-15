@@ -278,6 +278,7 @@ exports.getMyCamps = async (req, res) => {
   try {
     const camps = await BloodCamp.find({ organizer: req.user.id })
       .populate("bloodBankPartner", "name phone")
+      .populate("registeredDonors.donor", "name phone email bloodType city")
       .sort({ date: -1 });
 
     res.status(200).json({

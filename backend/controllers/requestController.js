@@ -85,11 +85,27 @@ exports.getAllRequests = async (req, res) => {
 };
 
 // @desc    Get requests for the same city and blood type as logged-in user
+// Blood compatibility helper function
+// Returns array of blood types that a donor can donate to
+const getCompatibleBloodTypes = (donorBloodType) => {
+  const compatibility = {
+    "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"], // Universal donor
+    "O+": ["O+", "A+", "B+", "AB+"],
+    "A-": ["A-", "A+", "AB-", "AB+"],
+    "A+": ["A+", "AB+"],
+    "B-": ["B-", "B+", "AB-", "AB+"],
+    "B+": ["B+", "AB+"],
+    "AB-": ["AB-", "AB+"],
+    "AB+": ["AB+"], // Universal receiver can only donate to AB+
+  };
+  return compatibility[donorBloodType] || [donorBloodType];
+};
+
 // @route   GET /api/requests/matching
 // @access  Private
 exports.getMatchingRequests = async (req, res) => {
   try {
-    // For users, match their blood type and city
+    // For users, match compatible blood types and city
     // For blood banks, show all requests in their city
     let query = {
       status: "pending",
@@ -97,7 +113,9 @@ exports.getMatchingRequests = async (req, res) => {
     };
 
     if (req.userType === "user") {
-      query.bloodType = req.user.bloodType;
+      // Get compatible blood types for this donor
+      const compatibleTypes = getCompatibleBloodTypes(req.user.bloodType);
+      query.bloodType = { $in: compatibleTypes };
     }
 
     const requests = await Request.find(query)

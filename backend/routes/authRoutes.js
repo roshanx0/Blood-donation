@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   registerUser,
@@ -6,20 +6,29 @@ const {
   loginUser,
   loginBloodBank,
   getMe,
+  updateProfile,
+  getDonationHistory,
+  addDonationRecord,
   logout,
-} = require('../controllers/authController');
-const { protect } = require('../middleware/auth');
+} = require("../controllers/authController");
+const { protect } = require("../middleware/auth");
 
 // User routes
-router.post('/register/user', registerUser);
-router.post('/login/user', loginUser);
+router.post("/register/user", registerUser);
+router.post("/login/user", loginUser);
 
 // Blood bank routes
-router.post('/register/bloodbank', registerBloodBank);
-router.post('/login/bloodbank', loginBloodBank);
+router.post("/register/bloodbank", registerBloodBank);
+router.post("/login/bloodbank", loginBloodBank);
 
 // Common routes
-router.get('/me', protect, getMe);
-router.post('/logout', protect, logout);
+router.get("/me", protect, getMe);
+router.put("/profile", protect, updateProfile);
+
+// Donation history routes (Users only)
+router.get("/donation-history", protect, getDonationHistory);
+router.post("/donation-history", protect, addDonationRecord);
+
+router.post("/logout", protect, logout);
 
 module.exports = router;

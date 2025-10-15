@@ -10,6 +10,8 @@ const User = require("./models/User");
 const BloodBank = require("./models/BloodBank");
 const Request = require("./models/Request");
 const Organization = require("./models/Organization");
+const BloodCamp = require("./models/BloodCamp");
+const DonationHistory = require("./models/DonationHistory");
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -843,6 +845,195 @@ const createRequests = async (users, bloodBanks) => {
   return createdRequests;
 };
 
+// Create Donation History
+const createDonationHistory = async (users, bloodBanks, camps) => {
+  const donationHistories = [];
+  const locations = [
+    "City Blood Bank",
+    "Red Cross Blood Center",
+    "Community Health Center",
+    "District Hospital Blood Bank",
+    "Medical College Blood Bank",
+    "Voluntary Blood Donation Camp",
+    "Corporate Blood Donation Drive",
+    "College Blood Donation Camp",
+  ];
+
+  // Create donation history for each user (3-8 donations per active user)
+  for (const user of users) {
+    // Skip admin and some users (to have variety)
+    if (user.role === "admin" || Math.random() > 0.7) continue;
+
+    const numDonations = Math.floor(Math.random() * 6) + 3; // 3-8 donations
+
+    for (let i = 0; i < numDonations; i++) {
+      // Random date in the past 2 years
+      const daysAgo = Math.floor(Math.random() * 730); // Up to 2 years ago
+      const donationDate = new Date();
+      donationDate.setDate(donationDate.getDate() - daysAgo);
+
+      // Ensure donations are at least 56 days apart (blood donation rules)
+      const minDaysBetween = 56;
+      if (i > 0) {
+        const previousDate = new Date(
+          donationHistories[donationHistories.length - 1].date
+        );
+        const daysDiff = Math.floor(
+          (donationDate - previousDate) / (1000 * 60 * 60 * 24)
+        );
+        if (Math.abs(daysDiff) < minDaysBetween) {
+          donationDate.setDate(
+            previousDate.getDate() -
+              minDaysBetween -
+              Math.floor(Math.random() * 30)
+          );
+        }
+      }
+
+      const randomLocation =
+        locations[Math.floor(Math.random() * locations.length)];
+      const randomBloodBank =
+        bloodBanks[Math.floor(Math.random() * bloodBanks.length)];
+      const randomCamp =
+        camps && camps.length > 0
+          ? camps[Math.floor(Math.random() * camps.length)]
+          : null;
+
+      const notes = [
+        "Smooth donation experience",
+        "Quick and efficient process",
+        "Staff was very professional",
+        "Happy to help save lives",
+        "Regular donor, great facility",
+        "First time donation, went well",
+        "Emergency donation for friend",
+        "Participated in blood donation drive",
+      ];
+
+      donationHistories.push({
+        userId: user._id,
+        location: `${randomLocation}, ${user.city}`,
+        date: donationDate,
+        quantity: [350, 450, 500][Math.floor(Math.random() * 3)],
+        bloodType: user.bloodType,
+        status: "completed",
+        notes: notes[Math.floor(Math.random() * notes.length)],
+        bloodBankId: Math.random() > 0.5 ? randomBloodBank._id : undefined,
+        campId: randomCamp && Math.random() > 0.7 ? randomCamp._id : undefined,
+      });
+    }
+  }
+
+  // Sort by date to maintain chronological order
+  donationHistories.sort((a, b) => a.date - b.date);
+
+  const createdDonations = await DonationHistory.insertMany(donationHistories);
+  console.log(`✅ Created ${createdDonations.length} donation history records`);
+
+  // Calculate some stats
+  const totalBloodDonated = createdDonations.reduce(
+    (sum, d) => sum + d.quantity,
+    0
+  );
+  const livesSaved = createdDonations.length * 3;
+  console.log(
+    `   📊 Total blood donated: ${totalBloodDonated}ml (~${(
+      totalBloodDonated / 1000
+    ).toFixed(1)} liters)`
+  );
+  console.log(`   💝 Estimated lives saved: ${livesSaved}`);
+
+  return createdDonations;
+};
+
+// Create Blood Camps
+const createBloodCamps = async (organizations, bloodBanks) => {
+  const camps = [];
+  const verifiedOrgs = organizations.filter((org) => org.isVerified);
+
+  const campTitles = [
+    "Blood Donation Camp",
+    "Life Saving Blood Drive",
+    "Community Blood Collection",
+    "Emergency Blood Donation",
+    "Voluntary Blood Donation Drive",
+    "Save Lives Blood Camp",
+  ];
+
+  const venues = [
+    "Community Hall",
+    "College Auditorium",
+    "Hospital Main Block",
+    "NGO Center",
+    "Sports Complex",
+    "Convention Center",
+  ];
+
+  // Create camps for verified organizations
+  for (const org of verifiedOrgs) {
+    const numCamps = Math.floor(Math.random() * 3) + 2; // 2-4 camps per org
+
+    for (let i = 0; i < numCamps; i++) {
+      // Only create upcoming camps (future dates - validation requires future dates)
+      const daysOffset = Math.floor(Math.random() * 120) + 1; // 1 to 120 days in the future
+      const campDate = new Date();
+      campDate.setDate(campDate.getDate() + daysOffset);
+
+      const status =
+        daysOffset <= 7
+          ? "ongoing" // Within next week
+          : "upcoming"; // Future camps
+
+      const randomVenue = venues[Math.floor(Math.random() * venues.length)];
+      const randomTitle =
+        campTitles[Math.floor(Math.random() * campTitles.length)];
+
+      camps.push({
+        title: `${randomTitle} - ${org.name}`,
+        organizer: org._id,
+        date: campDate,
+        startTime: ["09:00", "10:00", "08:00"][Math.floor(Math.random() * 3)],
+        endTime: ["16:00", "17:00", "18:00"][Math.floor(Math.random() * 3)],
+        venue: `${randomVenue}, ${org.city}`,
+        city: org.city,
+        address: org.address,
+        contactPerson: {
+          name: org.contactPerson.name,
+          phone: org.contactPerson.phone,
+          email: org.email,
+        },
+        expectedDonors: Math.floor(Math.random() * 100) + 50,
+        registeredDonors: [], // Will be empty array for now
+        status: status,
+        description: `Join us for a ${randomTitle.toLowerCase()} organized by ${
+          org.name
+        }. Every donation can save up to 3 lives. Walk-ins welcome!`,
+        requirements: `Age: 18-65 years, Weight: Minimum 50 kg, No recent illness or medication, Bring valid ID proof, Have a light meal before donation`,
+        facilities: [
+          "Refreshments provided",
+          "Medical team on-site",
+          "Free health checkup",
+        ],
+        isApproved: true,
+      });
+    }
+  }
+
+  const createdCamps = await BloodCamp.insertMany(camps);
+  console.log(`✅ Created ${createdCamps.length} blood camps`);
+  console.log(
+    `   📅 Upcoming: ${camps.filter((c) => c.status === "upcoming").length}`
+  );
+  console.log(
+    `   🔄 Ongoing: ${camps.filter((c) => c.status === "ongoing").length}`
+  );
+  console.log(
+    `   ✅ Completed: ${camps.filter((c) => c.status === "completed").length}`
+  );
+
+  return createdCamps;
+};
+
 // Seed Database
 const seedDatabase = async () => {
   try {
@@ -854,14 +1045,30 @@ const seedDatabase = async () => {
     await BloodBank.deleteMany({});
     await Request.deleteMany({});
     await Organization.deleteMany({});
+    await BloodCamp.deleteMany({});
+    await DonationHistory.deleteMany({});
     console.log("✅ Cleared existing data");
 
     // Create new data
     console.log("📝 Creating new data for Kerala region...");
+
+    console.log("\n👥 Creating Users...");
     const users = await createUsers();
+
+    console.log("\n🏥 Creating Blood Banks...");
     const bloodBanks = await createBloodBanks();
+
+    console.log("\n🏢 Creating Organizations...");
     const organizations = await createOrganizations();
+
+    console.log("\n⛺ Creating Blood Camps...");
+    const camps = await createBloodCamps(organizations, bloodBanks);
+
+    console.log("\n📋 Creating Requests...");
     const requests = await createRequests(users, bloodBanks);
+
+    console.log("\n💉 Creating Donation History...");
+    const donations = await createDonationHistory(users, bloodBanks, camps);
 
     console.log("\n🎉 Database seeded successfully with Kerala data!");
     console.log("\n📊 Summary:");
@@ -883,7 +1090,9 @@ const seedDatabase = async () => {
         organizations.filter((o) => o.isVerified).length
       } | Pending: ${organizations.filter((o) => !o.isVerified).length}`
     );
+    console.log(`   - Blood Camps: ${camps.length}`);
     console.log(`   - Blood Requests: ${requests.length}`);
+    console.log(`   - Donation Records: ${donations.length}`);
     console.log("\n✅ ALL PHONE NUMBERS VERIFIED: Exactly 10 digits");
     console.log("\n👤 Login Credentials:");
     console.log("\n   🔐 Admin (Thrissur):");
