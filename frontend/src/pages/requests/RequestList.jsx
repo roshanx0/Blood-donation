@@ -75,7 +75,9 @@ const RequestList = () => {
     );
 
     return isAuthenticated ? (
-      <DashboardLayout activeTab="all-requests" userType={userType}>{loadingContent}</DashboardLayout>
+      <DashboardLayout activeTab="all-requests" userType={userType}>
+        {loadingContent}
+      </DashboardLayout>
     ) : (
       loadingContent
     );
@@ -298,7 +300,9 @@ const RequestList = () => {
   );
 
   return isAuthenticated ? (
-    <DashboardLayout activeTab="all-requests" userType={userType}>{pageContent}</DashboardLayout>
+    <DashboardLayout activeTab="all-requests" userType={userType}>
+      {pageContent}
+    </DashboardLayout>
   ) : (
     pageContent
   );
