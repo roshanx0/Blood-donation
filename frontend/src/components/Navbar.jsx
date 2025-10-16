@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
 import { logout } from "../redux/slices/authSlice";
 import {
   Droplet,
@@ -227,132 +228,142 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 animate-slide-down">
-          <div className="px-4 pt-2 pb-4 space-y-2">
-            {isAuthenticated ? (
-              <>
-                <div className="px-4 py-3 bg-red-50 rounded-lg mb-3 border border-red-100">
-                  <p className="text-sm font-medium text-gray-800">
-                    {user?.name}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-0.5">{user?.email}</p>
-                </div>
-                <Link
-                  to={
-                    userType === "admin"
-                      ? "/admin/dashboard"
-                      : userType === "bloodbank"
-                      ? "/bloodbank/dashboard"
-                      : "/user/dashboard"
-                  }
-                  onClick={toggleMenu}
-                  className="block px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/requests"
-                  onClick={toggleMenu}
-                  className="block px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                >
-                  Blood Requests
-                </Link>
-                {userType === "user" && (
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-white border-t border-gray-200 overflow-hidden"
+          >
+            <div className="px-4 pt-2 pb-4 space-y-2">
+              {isAuthenticated ? (
+                <>
+                  <div className="px-4 py-3 bg-red-50 rounded-lg mb-3 border border-red-100">
+                    <p className="text-sm font-medium text-gray-800">
+                      {user?.name}
+                    </p>
+                    <p className="text-xs text-gray-600 mt-0.5">
+                      {user?.email}
+                    </p>
+                  </div>
                   <Link
-                    to="/blood-banks"
+                    to={
+                      userType === "admin"
+                        ? "/admin/dashboard"
+                        : userType === "bloodbank"
+                        ? "/bloodbank/dashboard"
+                        : "/user/dashboard"
+                    }
                     onClick={toggleMenu}
                     className="block px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
                   >
-                    Blood Banks
+                    Dashboard
                   </Link>
-                )}
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    toggleMenu();
-                  }}
-                  className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium mt-2"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                {/* Quick Links for non-authenticated users */}
-                <Link
-                  to="/blood-banks"
-                  onClick={toggleMenu}
-                  className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                >
-                  <Building2 className="h-4 w-4" />
-                  <span>Blood Banks</span>
-                </Link>
-
-                <div className="mb-4 mt-4">
-                  <p className="px-4 py-2 text-xs font-bold text-gray-600 uppercase">
-                    Login As
-                  </p>
                   <Link
-                    to="/login/user"
+                    to="/requests"
                     onClick={toggleMenu}
-                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
                   >
-                    <User className="h-4 w-4" />
-                    <span>Donor / Recipient</span>
+                    Blood Requests
                   </Link>
-                  <Link
-                    to="/login/bloodbank"
-                    onClick={toggleMenu}
-                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                  {userType === "user" && (
+                    <Link
+                      to="/blood-banks"
+                      onClick={toggleMenu}
+                      className="block px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    >
+                      Blood Banks
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      toggleMenu();
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium mt-2"
                   >
-                    <Droplet className="h-4 w-4" />
-                    <span>Blood Bank</span>
-                  </Link>
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Quick Links for non-authenticated users */}
                   <Link
-                    to="/login/organization"
+                    to="/blood-banks"
                     onClick={toggleMenu}
                     className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
                   >
                     <Building2 className="h-4 w-4" />
-                    <span>Hospital / NGO / College</span>
+                    <span>Blood Banks</span>
                   </Link>
-                </div>
 
-                <div>
-                  <p className="px-4 py-2 text-xs font-bold text-gray-600 uppercase">
-                    Register As
-                  </p>
-                  <Link
-                    to="/register/user"
-                    onClick={toggleMenu}
-                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                  >
-                    <User className="h-4 w-4" />
-                    <span>Donor</span>
-                  </Link>
-                  <Link
-                    to="/register/bloodbank"
-                    onClick={toggleMenu}
-                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                  >
-                    <Droplet className="h-4 w-4" />
-                    <span>Blood Bank</span>
-                  </Link>
-                  <Link
-                    to="/register/organization"
-                    onClick={toggleMenu}
-                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
-                  >
-                    <Building2 className="h-4 w-4" />
-                    <span>Hospital / NGO / College</span>
-                  </Link>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+                  <div className="mb-4 mt-4">
+                    <p className="px-4 py-2 text-xs font-bold text-gray-600 uppercase">
+                      Login As
+                    </p>
+                    <Link
+                      to="/login/user"
+                      onClick={toggleMenu}
+                      className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    >
+                      <User className="h-4 w-4" />
+                      <span>Donor / Recipient</span>
+                    </Link>
+                    <Link
+                      to="/login/bloodbank"
+                      onClick={toggleMenu}
+                      className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    >
+                      <Droplet className="h-4 w-4" />
+                      <span>Blood Bank</span>
+                    </Link>
+                    <Link
+                      to="/login/organization"
+                      onClick={toggleMenu}
+                      className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    >
+                      <Building2 className="h-4 w-4" />
+                      <span>Hospital / NGO / College</span>
+                    </Link>
+                  </div>
+
+                  <div>
+                    <p className="px-4 py-2 text-xs font-bold text-gray-600 uppercase">
+                      Register As
+                    </p>
+                    <Link
+                      to="/register/user"
+                      onClick={toggleMenu}
+                      className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    >
+                      <User className="h-4 w-4" />
+                      <span>Donor</span>
+                    </Link>
+                    <Link
+                      to="/register/bloodbank"
+                      onClick={toggleMenu}
+                      className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    >
+                      <Droplet className="h-4 w-4" />
+                      <span>Blood Bank</span>
+                    </Link>
+                    <Link
+                      to="/register/organization"
+                      onClick={toggleMenu}
+                      className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors font-medium"
+                    >
+                      <Building2 className="h-4 w-4" />
+                      <span>Hospital / NGO / College</span>
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

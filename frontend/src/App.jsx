@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Toaster } from "react-hot-toast";
+import { AnimatePresence } from "framer-motion";
 import { getCurrentUser } from "./redux/slices/authSlice";
 
 // Scroll to top on route change (except for home page)
@@ -115,192 +116,194 @@ function App() {
         }}
       />
       <ScrollToTop />
-      <Routes>
-        {/* Layout Wrapper */}
-        <Route element={<Layout />}>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login/user" element={<UserLogin />} />
-          <Route path="/login/bloodbank" element={<BloodBankLogin />} />
-          <Route path="/login/organization" element={<OrganizationLogin />} />
-          <Route path="/register/user" element={<UserRegister />} />
-          <Route path="/register/bloodbank" element={<BloodBankRegister />} />
-          <Route
-            path="/register/organization"
-            element={<OrganizationRegister />}
-          />
+      <AnimatePresence mode="wait">
+        <Routes>
+          {/* Public Routes with Layout (Navbar + Footer) */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/login/user" element={<UserLogin />} />
+            <Route path="/login/bloodbank" element={<BloodBankLogin />} />
+            <Route path="/login/organization" element={<OrganizationLogin />} />
+            <Route path="/register/user" element={<UserRegister />} />
+            <Route path="/register/bloodbank" element={<BloodBankRegister />} />
+            <Route
+              path="/register/organization"
+              element={<OrganizationRegister />}
+            />
 
-          {/* Public Blood Bank List */}
-          <Route path="/blood-banks" element={<BloodBankList />} />
+            {/* Public Blood Bank List */}
+            <Route path="/blood-banks" element={<BloodBankList />} />
 
-          {/* Blood Camps - Public Routes */}
-          <Route path="/camps" element={<BloodCampList />} />
-          <Route path="/camps/:id" element={<BloodCampDetail />} />
+            {/* Blood Camps - Public Routes */}
+            <Route path="/camps" element={<BloodCampList />} />
+            <Route path="/camps/:id" element={<BloodCampDetail />} />
 
-          {/* Public Requests List */}
-          <Route path="/requests" element={<RequestList />} />
+            {/* Public Requests List */}
+            <Route path="/requests" element={<RequestList />} />
 
-          {/* Eligibility Criteria */}
-          <Route path="/eligibility" element={<EligibilityCriteria />} />
+            {/* Eligibility Criteria */}
+            <Route path="/eligibility" element={<EligibilityCriteria />} />
+          </Route>
 
+          {/* Dashboard Routes (No Layout - they use DashboardLayout internally) */}
           {/* Protected Routes - User Dashboard */}
-          <Route
-            path="/user/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["user"]}>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/user/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <UserDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/user/profile"
-            element={
-              <ProtectedRoute allowedRoles={["user"]}>
-                <UserProfilePage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/user/profile"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <UserProfilePage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/user/donation-history"
-            element={
-              <ProtectedRoute allowedRoles={["user"]}>
-                <DonationHistory />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/user/donation-history"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <DonationHistory />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Protected Routes - Admin Dashboard */}
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Routes - Admin Dashboard */}
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/admin/users"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <ManageUsers />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <ManageUsers />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/admin/blood-banks"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <ManageBloodBanks />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/admin/blood-banks"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <ManageBloodBanks />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/admin/organizations"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <ManageOrganizations />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/admin/organizations"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <ManageOrganizations />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/admin/camps"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <ManageCamps />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/admin/camps"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <ManageCamps />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Protected Routes - Blood Bank Dashboard */}
-          <Route
-            path="/bloodbank/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["bloodbank"]}>
-                <BloodBankDashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Routes - Blood Bank Dashboard */}
+            <Route
+              path="/bloodbank/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["bloodbank"]}>
+                  <BloodBankDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/bloodbank/profile"
-            element={
-              <ProtectedRoute allowedRoles={["bloodbank"]}>
-                <BloodBankProfilePage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/bloodbank/profile"
+              element={
+                <ProtectedRoute allowedRoles={["bloodbank"]}>
+                  <BloodBankProfilePage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/bloodbank/inventory"
-            element={
-              <ProtectedRoute allowedRoles={["bloodbank"]}>
-                <BloodBankDashboard />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/bloodbank/inventory"
+              element={
+                <ProtectedRoute allowedRoles={["bloodbank"]}>
+                  <BloodBankDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Protected Routes - Organization Dashboard */}
-          <Route
-            path="/organization/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["organization"]}>
-                <OrganizationDashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Routes - Organization Dashboard */}
+            <Route
+              path="/organization/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["organization"]}>
+                  <OrganizationDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/organization/profile"
-            element={
-              <ProtectedRoute allowedRoles={["organization"]}>
-                <OrganizationProfilePage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/organization/profile"
+              element={
+                <ProtectedRoute allowedRoles={["organization"]}>
+                  <OrganizationProfilePage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/organization/my-camps"
-            element={
-              <ProtectedRoute allowedRoles={["organization"]}>
-                <MyCamps />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/organization/my-camps"
+              element={
+                <ProtectedRoute allowedRoles={["organization"]}>
+                  <MyCamps />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Protected Routes - Organization (Create Blood Camps) */}
-          <Route
-            path="/camps/create"
-            element={
-              <ProtectedRoute allowedRoles={["organization"]}>
-                <CreateBloodCamp />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Routes - Organization (Create Blood Camps) */}
+            <Route
+              path="/camps/create"
+              element={
+                <ProtectedRoute allowedRoles={["organization"]}>
+                  <CreateBloodCamp />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Protected Routes - Requests */}
-          <Route
-            path="/requests/create"
-            element={
-              <ProtectedRoute>
-                <CreateRequest />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Routes - Requests */}
+            <Route
+              path="/requests/create"
+              element={
+                <ProtectedRoute>
+                  <CreateRequest />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/requests/my-requests"
-            element={
-              <ProtectedRoute>
-                <MyRequests />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/requests/my-requests"
+              element={
+                <ProtectedRoute>
+                  <MyRequests />
+                </ProtectedRoute>
+              }
+            />
 
           <Route
             path="/requests/:id"
@@ -313,8 +316,8 @@ function App() {
 
           {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
+        </Routes>
+      </AnimatePresence>
     </Router>
   );
 }

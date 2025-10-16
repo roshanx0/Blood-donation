@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import { Search, Building2, Phone, Mail, MapPin, Droplet } from "lucide-react";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
 import DashboardLayout from "../../components/DashboardLayout";
+import PageTransition from "../../components/PageTransition";
 import axios from "../../utils/axios";
 
 const BloodBankList = () => {
@@ -77,198 +79,207 @@ const BloodBankList = () => {
   }
 
   const pageContent = (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Blood Banks</h1>
-          <p className="text-gray-700">
-            Find blood banks in your area with real-time inventory
-          </p>
-        </div>
-
-        <Card className="mb-8">
-          <div className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search by name, city, or address..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-field pl-11"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="city" className="label">
-                  Filter by City
-                </label>
-                <select
-                  id="city"
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                  className="input-field pl-4"
-                >
-                  <option value="">All Cities</option>
-                  {cities.map((city) => (
-                    <option key={city} value={city}>
-                      {city}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="bloodType" className="label">
-                  Filter by Blood Type Availability
-                </label>
-                <select
-                  id="bloodType"
-                  value={selectedBloodType}
-                  onChange={(e) => setSelectedBloodType(e.target.value)}
-                  className="input-field pl-4"
-                >
-                  <option value="">All Blood Types</option>
-                  {bloodTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {(selectedCity || selectedBloodType || searchTerm) && (
-              <div className="flex justify-end">
-                <button
-                  onClick={() => {
-                    setSelectedCity("");
-                    setSelectedBloodType("");
-                    setSearchTerm("");
-                  }}
-                  className="text-sm text-red-600 hover:text-red-700 font-semibold"
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            )}
-          </div>
-        </Card>
-
-        <div className="mb-4">
-          <p className="text-gray-700 font-medium">
-            Showing{" "}
-            <strong className="text-gray-900">
-              {filteredBloodBanks.length}
-            </strong>{" "}
-            blood bank(s)
-          </p>
-        </div>
-
-        {filteredBloodBanks.length === 0 ? (
-          <Card className="text-center py-12">
-            <div className="flex justify-center mb-4">
-              <Building2 className="h-16 w-16 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              No Blood Banks Found
-            </h3>
+    <PageTransition>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Blood Banks
+            </h1>
             <p className="text-gray-700">
-              Try adjusting your filters or search criteria
+              Find blood banks in your area with real-time inventory
             </p>
+          </motion.div>
+
+          <Card className="mb-8">
+            <div className="space-y-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search by name, city, or address..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="input-field pl-11"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="city" className="label">
+                    Filter by City
+                  </label>
+                  <select
+                    id="city"
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                    className="input-field pl-4"
+                  >
+                    <option value="">All Cities</option>
+                    {cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="bloodType" className="label">
+                    Filter by Blood Type Availability
+                  </label>
+                  <select
+                    id="bloodType"
+                    value={selectedBloodType}
+                    onChange={(e) => setSelectedBloodType(e.target.value)}
+                    className="input-field pl-4"
+                  >
+                    <option value="">All Blood Types</option>
+                    {bloodTypes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {(selectedCity || selectedBloodType || searchTerm) && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => {
+                      setSelectedCity("");
+                      setSelectedBloodType("");
+                      setSearchTerm("");
+                    }}
+                    className="text-sm text-red-600 hover:text-red-700 font-semibold"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              )}
+            </div>
           </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-6">
-            {filteredBloodBanks.map((bank) => (
-              <Card
-                key={bank._id}
-                className="hover:shadow-xl transition-shadow"
-              >
-                <div className="flex flex-col lg:flex-row">
-                  <div className="flex-1">
-                    <div className="flex items-start space-x-4 mb-4">
-                      <div className="bg-gradient-to-r from-red-600 to-red-700 p-3 rounded-full">
-                        <Building2 className="h-8 w-8 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                          {bank.name}
-                        </h3>
-                        <div className="space-y-2 text-sm text-gray-700">
-                          <div className="flex items-center space-x-2">
-                            <MapPin className="h-4 w-4 flex-shrink-0 text-gray-500" />
-                            <span>
-                              {bank.address}, {bank.city}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Phone className="h-4 w-4 flex-shrink-0 text-gray-500" />
-                            <a
-                              href={`tel:${bank.phone}`}
-                              className="hover:text-red-600 transition-colors"
-                            >
-                              {bank.phone}
-                            </a>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Mail className="h-4 w-4 flex-shrink-0 text-gray-500" />
-                            <a
-                              href={`mailto:${bank.email}`}
-                              className="hover:text-red-600 transition-colors"
-                            >
-                              {bank.email}
-                            </a>
+
+          <div className="mb-4">
+            <p className="text-gray-700 font-medium">
+              Showing{" "}
+              <strong className="text-gray-900">
+                {filteredBloodBanks.length}
+              </strong>{" "}
+              blood bank(s)
+            </p>
+          </div>
+
+          {filteredBloodBanks.length === 0 ? (
+            <Card className="text-center py-12">
+              <div className="flex justify-center mb-4">
+                <Building2 className="h-16 w-16 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                No Blood Banks Found
+              </h3>
+              <p className="text-gray-700">
+                Try adjusting your filters or search criteria
+              </p>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              {filteredBloodBanks.map((bank) => (
+                <Card
+                  key={bank._id}
+                  className="hover:shadow-xl transition-shadow"
+                >
+                  <div className="flex flex-col lg:flex-row">
+                    <div className="flex-1">
+                      <div className="flex items-start space-x-4 mb-4">
+                        <div className="bg-gradient-to-r from-red-600 to-red-700 p-3 rounded-full">
+                          <Building2 className="h-8 w-8 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                            {bank.name}
+                          </h3>
+                          <div className="space-y-2 text-sm text-gray-700">
+                            <div className="flex items-center space-x-2">
+                              <MapPin className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                              <span>
+                                {bank.address}, {bank.city}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Phone className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                              <a
+                                href={`tel:${bank.phone}`}
+                                className="hover:text-red-600 transition-colors"
+                              >
+                                {bank.phone}
+                              </a>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Mail className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                              <a
+                                href={`mailto:${bank.email}`}
+                                className="hover:text-red-600 transition-colors"
+                              >
+                                {bank.email}
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="flex items-center space-x-2 mb-3">
-                        <Droplet className="h-5 w-5 text-red-600" />
-                        <h4 className="font-bold text-gray-900">
-                          Available Blood Inventory
-                        </h4>
-                      </div>
-                      <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
-                        {bank.inventory?.map((item) => (
-                          <div
-                            key={item.bloodType}
-                            className={`text-center p-3 rounded-lg border-2 transition-all ${
-                              item.quantity > 0
-                                ? "bg-green-50 border-green-300"
-                                : "bg-red-50 border-red-300"
-                            }`}
-                          >
-                            <div className="font-bold text-lg text-gray-900 mb-1">
-                              {item.bloodType}
-                            </div>
+                      <div className="border-t border-gray-200 pt-4">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <Droplet className="h-5 w-5 text-red-600" />
+                          <h4 className="font-bold text-gray-900">
+                            Available Blood Inventory
+                          </h4>
+                        </div>
+                        <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
+                          {bank.inventory?.map((item) => (
                             <div
-                              className={`text-sm font-bold ${
+                              key={item.bloodType}
+                              className={`text-center p-3 rounded-lg border-2 transition-all ${
                                 item.quantity > 0
-                                  ? "text-green-700"
-                                  : "text-red-700"
+                                  ? "bg-green-50 border-green-300"
+                                  : "bg-red-50 border-red-300"
                               }`}
                             >
-                              {item.quantity > 0
-                                ? `${item.quantity} units`
-                                : "Out"}
+                              <div className="font-bold text-lg text-gray-900 mb-1">
+                                {item.bloodType}
+                              </div>
+                              <div
+                                className={`text-sm font-bold ${
+                                  item.quantity > 0
+                                    ? "text-green-700"
+                                    : "text-red-700"
+                                }`}
+                              >
+                                {item.quantity > 0
+                                  ? `${item.quantity} units`
+                                  : "Out"}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </PageTransition>
   );
 
   return isAuthenticated ? (
