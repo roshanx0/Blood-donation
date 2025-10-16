@@ -137,6 +137,9 @@ function App() {
           <Route path="/camps" element={<BloodCampList />} />
           <Route path="/camps/:id" element={<BloodCampDetail />} />
 
+          {/* Public Requests List */}
+          <Route path="/requests" element={<RequestList />} />
+
           {/* Eligibility Criteria */}
           <Route path="/eligibility" element={<EligibilityCriteria />} />
 
@@ -281,15 +284,6 @@ function App() {
           />
 
           {/* Protected Routes - Requests */}
-          <Route
-            path="/requests"
-            element={
-              <ProtectedRoute>
-                <RequestList />
-              </ProtectedRoute>
-            }
-          />
-
           <Route
             path="/requests/create"
             element={

@@ -71,6 +71,26 @@ const BloodCampDetail = () => {
     }
   };
 
+  const handleUnregister = async () => {
+    if (!user) {
+      toast.error("Please login first");
+      return;
+    }
+
+    setRegistering(true);
+    try {
+      const response = await axios.post(`/camps/${id}/unregister`);
+      if (response.data.success) {
+        toast.success("Successfully unregistered from the blood camp");
+        fetchCampDetails(); // Refresh to show updated registration count
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Unregistration failed");
+    } finally {
+      setRegistering(false);
+    }
+  };
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
       weekday: "long",
@@ -321,18 +341,37 @@ const BloodCampDetail = () => {
                 )}
               </div>
 
-              {canRegister() ? (
+              {camp.status === "upcoming" && user && userType === "user" ? (
                 <button
-                  onClick={handleRegister}
-                  disabled={registering}
-                  className="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  onClick={
+                    isUserRegistered() ? handleUnregister : handleRegister
+                  }
+                  disabled={
+                    registering || (isCampFull() && !isUserRegistered())
+                  }
+                  className={`w-full py-3 rounded-lg font-bold transition-colors disabled:cursor-not-allowed ${
+                    isUserRegistered()
+                      ? "bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
+                      : "bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-400"
+                  }`}
                 >
-                  {registering ? "Registering..." : "Register for This Camp"}
+                  {registering
+                    ? isUserRegistered()
+                      ? "Unregistering..."
+                      : "Registering..."
+                    : isUserRegistered()
+                    ? "✓ Registered - Click to Unregister"
+                    : isCampFull()
+                    ? "Camp is Full"
+                    : "Register for This Camp"}
                 </button>
-              ) : isUserRegistered() ? (
-                <div className="text-center py-3 bg-green-50 border-2 border-green-600 text-green-900 rounded-lg font-bold">
-                  You're Registered!
-                </div>
+              ) : camp.status === "upcoming" && !user ? (
+                <Link
+                  to="/login/user"
+                  className="block text-center w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition-colors"
+                >
+                  Login to Register
+                </Link>
               ) : isCampFull() ? (
                 <div className="text-center py-3 bg-gray-100 border-2 border-gray-300 text-gray-600 rounded-lg font-bold">
                   Camp is Full
@@ -341,14 +380,7 @@ const BloodCampDetail = () => {
                 <div className="text-center py-3 bg-gray-100 border-2 border-gray-300 text-gray-600 rounded-lg font-bold capitalize">
                   Camp is {camp.status}
                 </div>
-              ) : (
-                <Link
-                  to="/login/user"
-                  className="block text-center w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition-colors"
-                >
-                  Login to Register
-                </Link>
-              )}
+              ) : null}
 
               {!isUserRegistered() && camp.status === "upcoming" && (
                 <p className="text-xs text-gray-600 text-center mt-3">

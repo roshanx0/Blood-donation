@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   Calendar,
   MapPin,
@@ -12,9 +13,11 @@ import {
 } from "lucide-react";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
+import DashboardLayout from "../../components/DashboardLayout";
 import axios from "../../utils/axios";
 
 const BloodCampList = () => {
+  const { user } = useSelector((state) => state.auth);
   const [camps, setCamps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -70,7 +73,31 @@ const BloodCampList = () => {
     }
   };
 
-  return (
+  const isAuthenticated = !!user;
+  const userType =
+    user?.role === "admin"
+      ? "admin"
+      : user?.role === "bloodbank"
+      ? "bloodbank"
+      : user?.role === "organization"
+      ? "organization"
+      : "user";
+
+  if (loading) {
+    const loadingContent = (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+
+    return isAuthenticated ? (
+      <DashboardLayout userType={userType}>{loadingContent}</DashboardLayout>
+    ) : (
+      loadingContent
+    );
+  }
+
+  const pageContent = (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -288,6 +315,12 @@ const BloodCampList = () => {
         </Card>
       </div>
     </div>
+  );
+
+  return isAuthenticated ? (
+    <DashboardLayout userType={userType}>{pageContent}</DashboardLayout>
+  ) : (
+    pageContent
   );
 };
 

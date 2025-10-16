@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Search, Building2, Phone, Mail, MapPin, Droplet } from "lucide-react";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
+import DashboardLayout from "../../components/DashboardLayout";
 import axios from "../../utils/axios";
 
 const BloodBankList = () => {
+  const { user } = useSelector((state) => state.auth);
   const [bloodBanks, setBloodBanks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,11 +52,31 @@ const BloodBankList = () => {
 
   const cities = [...new Set(bloodBanks.map((bank) => bank.city))].sort();
 
+  const isAuthenticated = !!user;
+  const userType =
+    user?.role === "admin"
+      ? "admin"
+      : user?.role === "bloodbank"
+      ? "bloodbank"
+      : user?.role === "organization"
+      ? "organization"
+      : "user";
+
   if (isLoading) {
-    return <Loader fullScreen />;
+    const loadingContent = (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+
+    return isAuthenticated ? (
+      <DashboardLayout userType={userType}>{loadingContent}</DashboardLayout>
+    ) : (
+      loadingContent
+    );
   }
 
-  return (
+  const pageContent = (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
@@ -246,6 +269,12 @@ const BloodBankList = () => {
         )}
       </div>
     </div>
+  );
+
+  return isAuthenticated ? (
+    <DashboardLayout userType={userType}>{pageContent}</DashboardLayout>
+  ) : (
+    pageContent
   );
 };
 

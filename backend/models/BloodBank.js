@@ -60,6 +60,10 @@ const bloodBankSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    role: {
+      type: String,
+      default: 'bloodbank',
+    },
     inventory: [
       {
         bloodType: {

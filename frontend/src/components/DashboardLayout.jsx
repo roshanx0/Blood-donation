@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import {
@@ -23,6 +23,7 @@ const DashboardLayout = ({ children, activeTab, userType }) => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await dispatch(logout());
@@ -202,7 +203,8 @@ const DashboardLayout = ({ children, activeTab, userType }) => {
               <nav className="space-y-1">
                 {navigationItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = activeTab === item.id;
+                  const isActive =
+                    activeTab === item.id || location.pathname === item.path;
                   return (
                     <Link
                       key={item.id}
@@ -274,7 +276,8 @@ const DashboardLayout = ({ children, activeTab, userType }) => {
         <nav className="px-3 py-4 space-y-1 flex-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activeTab === item.id;
+            const isActive =
+              activeTab === item.id || location.pathname === item.path;
             return (
               <Link
                 key={item.id}

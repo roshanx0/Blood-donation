@@ -5,6 +5,7 @@ const {
   getAllBloodCamps,
   getBloodCampById,
   registerForCamp,
+  unregisterFromCamp,
   getMyCamps,
   getMyRegistrations,
   updateBloodCamp,
@@ -23,6 +24,7 @@ router.get("/user/my-registrations", protect, getMyRegistrations);
 // Parameterized routes (must come after specific routes)
 router.get("/:id", getBloodCampById);
 router.post("/:id/register", protect, registerForCamp);
+router.post("/:id/unregister", protect, unregisterFromCamp);
 router.put("/:id", protect, updateBloodCamp);
 router.delete("/:id", protect, deleteBloodCamp);
 

@@ -1,19 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { getMyRequests, deleteRequest } from '../../redux/slices/requestSlice';
-import { Calendar, MapPin, Phone, Trash2, Eye, MessageCircle } from 'lucide-react';
-import Card from '../../components/Card';
-import BloodTypeBadge from '../../components/BloodTypeBadge';
-import UrgencyBadge from '../../components/UrgencyBadge';
-import StatusBadge from '../../components/StatusBadge';
-import Loader from '../../components/Loader';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { getMyRequests, deleteRequest } from "../../redux/slices/requestSlice";
+import {
+  Calendar,
+  MapPin,
+  Phone,
+  Trash2,
+  Eye,
+  MessageCircle,
+} from "lucide-react";
+import Card from "../../components/Card";
+import BloodTypeBadge from "../../components/BloodTypeBadge";
+import UrgencyBadge from "../../components/UrgencyBadge";
+import StatusBadge from "../../components/StatusBadge";
+import Loader from "../../components/Loader";
+import DashboardLayout from "../../components/DashboardLayout";
 
 const MyRequests = () => {
   const { myRequests, isLoading } = useSelector((state) => state.requests);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     dispatch(getMyRequests());
@@ -22,7 +31,7 @@ const MyRequests = () => {
   const handleDelete = async (id) => {
     if (
       window.confirm(
-        'Are you sure you want to delete this request? This action cannot be undone.'
+        "Are you sure you want to delete this request? This action cannot be undone."
       )
     ) {
       await dispatch(deleteRequest(id));
@@ -30,20 +39,34 @@ const MyRequests = () => {
   };
 
   const filteredRequests =
-    filter === 'all'
+    filter === "all"
       ? myRequests
       : myRequests.filter((req) => req.status === filter);
 
+  // Determine user type for DashboardLayout
+  const userType =
+    user?.role === "admin"
+      ? "admin"
+      : user?.role === "bloodbank"
+      ? "bloodbank"
+      : user?.role === "organization"
+      ? "organization"
+      : "user";
+
   if (isLoading) {
-    return <Loader fullScreen />;
+    return (
+      <DashboardLayout activeTab="my-requests" userType={userType}>
+        <Loader fullScreen />
+      </DashboardLayout>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <DashboardLayout activeTab="my-requests" userType={userType}>
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">My Requests</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Requests</h1>
           <p className="text-gray-600">
             View and manage your blood donation requests
           </p>
@@ -53,47 +76,47 @@ const MyRequests = () => {
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => setFilter('all')}
+              onClick={() => setFilter("all")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                filter === 'all'
-                  ? 'bg-red-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                filter === "all"
+                  ? "bg-red-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
               All ({myRequests.length})
             </button>
             <button
-              onClick={() => setFilter('pending')}
+              onClick={() => setFilter("pending")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                filter === 'pending'
-                  ? 'bg-yellow-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                filter === "pending"
+                  ? "bg-yellow-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
               Pending (
-              {myRequests.filter((req) => req.status === 'pending').length})
+              {myRequests.filter((req) => req.status === "pending").length})
             </button>
             <button
-              onClick={() => setFilter('fulfilled')}
+              onClick={() => setFilter("fulfilled")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                filter === 'fulfilled'
-                  ? 'bg-green-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                filter === "fulfilled"
+                  ? "bg-green-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
               Fulfilled (
-              {myRequests.filter((req) => req.status === 'fulfilled').length})
+              {myRequests.filter((req) => req.status === "fulfilled").length})
             </button>
             <button
-              onClick={() => setFilter('cancelled')}
+              onClick={() => setFilter("cancelled")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                filter === 'cancelled'
-                  ? 'bg-gray-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                filter === "cancelled"
+                  ? "bg-gray-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
               Cancelled (
-              {myRequests.filter((req) => req.status === 'cancelled').length})
+              {myRequests.filter((req) => req.status === "cancelled").length})
             </button>
           </div>
         </div>
@@ -108,7 +131,7 @@ const MyRequests = () => {
               No Requests Found
             </h3>
             <p className="text-gray-600 mb-6">
-              {filter === 'all'
+              {filter === "all"
                 ? "You haven't created any blood requests yet"
                 : `You don't have any ${filter} requests`}
             </p>
@@ -152,14 +175,14 @@ const MyRequests = () => {
                           <span>{request.contactNumber}</span>
                         </div>
                         <div>
-                          <span className="font-semibold">Quantity:</span>{' '}
+                          <span className="font-semibold">Quantity:</span>{" "}
                           {request.quantity} unit(s)
                         </div>
                       </div>
 
                       <div className="flex items-center space-x-4 text-xs text-gray-500">
                         <span>
-                          Posted on{' '}
+                          Posted on{" "}
                           {new Date(request.createdAt).toLocaleDateString()}
                         </span>
                         {request.responses?.length > 0 && (
@@ -180,7 +203,7 @@ const MyRequests = () => {
                       <Eye className="h-4 w-4" />
                       <span>View</span>
                     </Link>
-                    {request.status === 'pending' && (
+                    {request.status === "pending" && (
                       <button
                         onClick={() => handleDelete(request._id)}
                         className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -196,7 +219,7 @@ const MyRequests = () => {
           </div>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

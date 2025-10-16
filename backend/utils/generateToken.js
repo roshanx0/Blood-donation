@@ -16,10 +16,21 @@ const sendTokenResponse = (user, statusCode, res, model) => {
     sameSite: 'strict',
   };
 
+  // Add role property based on model type
+  const userData = user.toObject();
+  if (model === 'BloodBank') {
+    userData.role = 'bloodbank';
+  } else if (model === 'Organization') {
+    userData.role = 'organization';
+  } else if (model === 'User') {
+    // Check if user is admin
+    userData.role = userData.role || 'user';
+  }
+
   res.status(statusCode).cookie('token', token, options).json({
     success: true,
     token,
-    user,
+    user: userData,
   });
 };
 

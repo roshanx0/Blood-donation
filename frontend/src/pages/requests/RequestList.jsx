@@ -8,9 +8,11 @@ import BloodTypeBadge from "../../components/BloodTypeBadge";
 import UrgencyBadge from "../../components/UrgencyBadge";
 import StatusBadge from "../../components/StatusBadge";
 import Loader from "../../components/Loader";
+import DashboardLayout from "../../components/DashboardLayout";
 
 const RequestList = () => {
   const { requests, isLoading } = useSelector((state) => state.requests);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState({
@@ -55,11 +57,31 @@ const RequestList = () => {
 
   const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
+  const isAuthenticated = !!user;
+  const userType =
+    user?.role === "admin"
+      ? "admin"
+      : user?.role === "bloodbank"
+      ? "bloodbank"
+      : user?.role === "organization"
+      ? "organization"
+      : "user";
+
   if (isLoading) {
-    return <Loader fullScreen />;
+    const loadingContent = (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+
+    return isAuthenticated ? (
+      <DashboardLayout activeTab="all-requests" userType={userType}>{loadingContent}</DashboardLayout>
+    ) : (
+      loadingContent
+    );
   }
 
-  return (
+  const pageContent = (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -273,6 +295,12 @@ const RequestList = () => {
         )}
       </div>
     </div>
+  );
+
+  return isAuthenticated ? (
+    <DashboardLayout activeTab="all-requests" userType={userType}>{pageContent}</DashboardLayout>
+  ) : (
+    pageContent
   );
 };
 

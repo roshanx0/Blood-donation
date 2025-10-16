@@ -271,6 +271,63 @@ exports.registerForCamp = async (req, res) => {
   }
 };
 
+// @desc    Unregister donor from blood camp
+// @route   POST /api/camps/:id/unregister
+// @access  Private (Donor only)
+exports.unregisterFromCamp = async (req, res) => {
+  try {
+    const camp = await BloodCamp.findById(req.params.id);
+
+    if (!camp) {
+      return res.status(404).json({
+        success: false,
+        message: "Blood camp not found",
+      });
+    }
+
+    if (!camp.isUserRegistered(req.user.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "You are not registered for this camp",
+      });
+    }
+
+    // Don't allow unregistering from completed or ongoing camps
+    if (camp.status === "completed") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot unregister from completed camp",
+      });
+    }
+
+    if (camp.status === "ongoing") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot unregister from ongoing camp",
+      });
+    }
+
+    // Remove the donor from registeredDonors array
+    camp.registeredDonors = camp.registeredDonors.filter(
+      (registration) => registration.donor.toString() !== req.user.id
+    );
+
+    await camp.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Successfully unregistered from blood camp",
+      data: camp,
+    });
+  } catch (error) {
+    console.error("Unregister from camp error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 // @desc    Get camps created by organization
 // @route   GET /api/camps/my-camps
 // @access  Private (Organization only)
