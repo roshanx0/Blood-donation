@@ -1,4 +1,4 @@
-const BloodBank = require('../models/BloodBank');
+const BloodBank = require("../models/BloodBank");
 
 // @desc    Update blood bank inventory
 // @route   PUT /api/bloodbanks/inventory
@@ -12,7 +12,7 @@ exports.updateInventory = async (req, res) => {
     if (!bloodBank) {
       return res.status(404).json({
         success: false,
-        message: 'Blood bank not found',
+        message: "Blood bank not found",
       });
     }
 
@@ -22,14 +22,14 @@ exports.updateInventory = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Inventory updated successfully',
+      message: "Inventory updated successfully",
       bloodBank,
     });
   } catch (error) {
-    console.error('Update inventory error:', error);
+    console.error("Update inventory error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error updating inventory',
+      message: "Error updating inventory",
     });
   }
 };
@@ -40,14 +40,29 @@ exports.updateInventory = async (req, res) => {
 exports.getInventory = async (req, res) => {
   try {
     const bloodBank = await BloodBank.findById(req.params.id).select(
-      'name city inventory'
+      "name city inventory"
     );
 
     if (!bloodBank) {
       return res.status(404).json({
         success: false,
-        message: 'Blood bank not found',
+        message: "Blood bank not found",
       });
+    }
+
+    // Initialize inventory if empty
+    if (!bloodBank.inventory || bloodBank.inventory.length === 0) {
+      bloodBank.inventory = [
+        { bloodType: "A+", quantity: 0 },
+        { bloodType: "A-", quantity: 0 },
+        { bloodType: "B+", quantity: 0 },
+        { bloodType: "B-", quantity: 0 },
+        { bloodType: "AB+", quantity: 0 },
+        { bloodType: "AB-", quantity: 0 },
+        { bloodType: "O+", quantity: 0 },
+        { bloodType: "O-", quantity: 0 },
+      ];
+      await bloodBank.save();
     }
 
     res.status(200).json({
@@ -56,10 +71,10 @@ exports.getInventory = async (req, res) => {
       bloodBank,
     });
   } catch (error) {
-    console.error('Get inventory error:', error);
+    console.error("Get inventory error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching inventory',
+      message: "Error fetching inventory",
     });
   }
 };
@@ -74,10 +89,10 @@ exports.getAllBloodBanks = async (req, res) => {
     let query = { isApproved: true, isActive: true };
 
     if (city) {
-      query.city = new RegExp(city, 'i');
+      query.city = new RegExp(city, "i");
     }
 
-    let bloodBanks = await BloodBank.find(query).select('-password');
+    let bloodBanks = await BloodBank.find(query).select("-password");
 
     // Filter by blood type availability if specified
     if (bloodType) {
@@ -95,10 +110,10 @@ exports.getAllBloodBanks = async (req, res) => {
       bloodBanks,
     });
   } catch (error) {
-    console.error('Get all blood banks error:', error);
+    console.error("Get all blood banks error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching blood banks',
+      message: "Error fetching blood banks",
     });
   }
 };
@@ -109,7 +124,7 @@ exports.getAllBloodBanks = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const bloodBank = await BloodBank.findById(req.user._id).select(
-      '-password'
+      "-password"
     );
 
     res.status(200).json({
@@ -117,10 +132,10 @@ exports.getProfile = async (req, res) => {
       bloodBank,
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error("Get profile error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching profile',
+      message: "Error fetching profile",
     });
   }
 };
@@ -137,7 +152,7 @@ exports.updateProfile = async (req, res) => {
     if (!bloodBank) {
       return res.status(404).json({
         success: false,
-        message: 'Blood bank not found',
+        message: "Blood bank not found",
       });
     }
 
@@ -151,14 +166,14 @@ exports.updateProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Profile updated successfully',
+      message: "Profile updated successfully",
       bloodBank,
     });
   } catch (error) {
-    console.error('Update profile error:', error);
+    console.error("Update profile error:", error);
     res.status(500).json({
       success: false,
-      message: 'Error updating profile',
+      message: "Error updating profile",
     });
   }
 };

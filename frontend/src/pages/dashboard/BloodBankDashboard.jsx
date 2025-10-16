@@ -45,9 +45,27 @@ const BloodBankDashboard = () => {
   const fetchInventory = async () => {
     try {
       const response = await axios.get(`/bloodbanks/${user._id}/inventory`);
-      setInventory(response.data.inventory);
+      const inventoryData = response.data.inventory || [];
+
+      // Initialize inventory if empty
+      if (inventoryData.length === 0) {
+        const defaultInventory = [
+          { bloodType: "A+", quantity: 0 },
+          { bloodType: "A-", quantity: 0 },
+          { bloodType: "B+", quantity: 0 },
+          { bloodType: "B-", quantity: 0 },
+          { bloodType: "AB+", quantity: 0 },
+          { bloodType: "AB-", quantity: 0 },
+          { bloodType: "O+", quantity: 0 },
+          { bloodType: "O-", quantity: 0 },
+        ];
+        setInventory(defaultInventory);
+      } else {
+        setInventory(inventoryData);
+      }
     } catch (error) {
       console.error("Error fetching inventory:", error);
+      toast.error("Failed to load inventory");
     }
   };
 
@@ -186,43 +204,49 @@ const BloodBankDashboard = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-            {inventory.map((item) => (
-              <div
-                key={item.bloodType}
-                className={`bg-white rounded-lg p-4 border text-center ${
-                  item.quantity < 5
-                    ? "border-2 border-yellow-400"
-                    : "border-gray-200"
-                }`}
-              >
-                <BloodTypeBadge bloodType={item.bloodType} size="md" />
-                {isEditMode ? (
-                  <input
-                    type="number"
-                    min="0"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      handleInventoryChange(item.bloodType, e.target.value)
-                    }
-                    className="mt-3 w-full text-center text-2xl font-bold text-gray-900 border-2 border-gray-300 rounded-lg py-1 focus:border-red-500 focus:outline-none"
-                  />
-                ) : (
-                  <div className="mt-3 text-2xl font-bold text-gray-900">
-                    {item.quantity}
-                  </div>
-                )}
-                <div className="mt-1 text-xs text-gray-600">units</div>
-                {item.quantity < 5 && (
-                  <div className="mt-2">
-                    <span className="inline-block px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">
-                      Low Stock
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          {inventory.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-lg">Loading inventory...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+              {inventory.map((item) => (
+                <div
+                  key={item.bloodType}
+                  className={`bg-white rounded-lg p-4 border text-center ${
+                    item.quantity < 5
+                      ? "border-2 border-yellow-400"
+                      : "border-gray-200"
+                  }`}
+                >
+                  <BloodTypeBadge bloodType={item.bloodType} size="md" />
+                  {isEditMode ? (
+                    <input
+                      type="number"
+                      min="0"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleInventoryChange(item.bloodType, e.target.value)
+                      }
+                      className="mt-3 w-full text-center text-2xl font-bold text-gray-900 border-2 border-gray-300 rounded-lg py-1 focus:border-red-500 focus:outline-none"
+                    />
+                  ) : (
+                    <div className="mt-3 text-2xl font-bold text-gray-900">
+                      {item.quantity}
+                    </div>
+                  )}
+                  <div className="mt-1 text-xs text-gray-600">units</div>
+                  {item.quantity < 5 && (
+                    <div className="mt-2">
+                      <span className="inline-block px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full">
+                        Low Stock
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
 
         {/* Quick Actions */}
