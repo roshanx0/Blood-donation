@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getDashboardStats,
   getPendingBloodBanks,
   approveBloodBank,
   rejectBloodBank,
 } from "../../redux/slices/adminSlice";
+import { logout } from "../../redux/slices/authSlice";
 import {
   Users,
   Building2,
@@ -16,6 +17,9 @@ import {
   BarChart3,
   Building,
   Calendar,
+  Home,
+  LogOut,
+  Droplet,
 } from "lucide-react";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
@@ -25,12 +29,19 @@ const AdminDashboard = () => {
   const { stats, pendingBloodBanks, isLoading } = useSelector(
     (state) => state.admin
   );
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getDashboardStats());
     dispatch(getPendingBloodBanks());
   }, [dispatch]);
+
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate("/");
+  };
 
   const handleApprove = async (id) => {
     if (window.confirm("Are you sure you want to approve this blood bank?")) {
@@ -55,14 +66,78 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      {/* Top Navigation Bar */}
+      <nav className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Left - Logo & Brand */}
+            <Link
+              to="/"
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            >
+              <div className="bg-gradient-to-br from-red-600 to-red-700 p-2 rounded-lg shadow-sm">
+                <Droplet className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <span className="text-xl font-bold gradient-text">
+                  BloodLife
+                </span>
+                <span className="ml-2 text-sm text-gray-600 font-semibold">
+                  Admin
+                </span>
+              </div>
+            </Link>
+
+            {/* Right - User Info & Actions */}
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* User Info - Hidden on mobile */}
+              <div className="hidden sm:flex items-center space-x-3 px-3 sm:px-4 py-2 bg-gray-50 rounded-lg">
+                <div className="bg-gradient-to-br from-red-600 to-red-700 p-2 rounded-lg">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
+                <div className="hidden md:block">
+                  <p className="text-sm font-bold text-gray-900">
+                    {user?.name}
+                  </p>
+                  <p className="text-xs text-gray-600">{user?.email}</p>
+                </div>
+              </div>
+
+              {/* Home Button */}
+              <Link
+                to="/"
+                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm"
+                title="Go to Home"
+              >
+                <Home className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden sm:inline font-medium">Home</span>
+              </Link>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors shadow-sm"
+                title="Logout"
+              >
+                <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden sm:inline font-medium">Logout</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section with Welcome */}
-        <div className="mb-8 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-8 text-white shadow-xl">
+        <div className="mb-8 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-              <p className="text-red-100 text-lg">
+              <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+                Admin Dashboard
+              </h1>
+              <p className="text-red-100 text-base sm:text-lg">
                 Welcome back! Here's your system overview
               </p>
             </div>
