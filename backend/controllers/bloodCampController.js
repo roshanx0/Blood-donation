@@ -538,7 +538,7 @@ exports.verifyAttendance = async (req, res) => {
 
     // Mark attendance
     camp.registeredDonors[registrationIndex].attended = true;
-    await camp.save();
+    await camp.save({ validateBeforeSave: false });
 
     // Create donation history record
     const DonationHistory = require("../models/DonationHistory");

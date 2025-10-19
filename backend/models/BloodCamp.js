@@ -32,12 +32,6 @@ const bloodCampSchema = new mongoose.Schema(
     date: {
       type: Date,
       required: [true, "Camp date is required"],
-      validate: {
-        validator: function (v) {
-          return v > new Date();
-        },
-        message: "Camp date must be in the future",
-      },
     },
     startTime: {
       type: String,

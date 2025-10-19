@@ -969,20 +969,117 @@ const createBloodCamps = async (organizations, bloodBanks) => {
     "Convention Center",
   ];
 
-  // Create camps for verified organizations
+  // First, create ONGOING camps (today's date - October 20, 2025)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  console.log(
+    `   Creating camps for TODAY (${today.toDateString()}) to test ONGOING status...`
+  );
+
+  // Create 3-5 ongoing camps from different organizations for TODAY
+  const numOngoingCamps = Math.floor(Math.random() * 3) + 3; // 3-5 camps
+  for (let i = 0; i < numOngoingCamps && i < verifiedOrgs.length; i++) {
+    const org = verifiedOrgs[i];
+    const randomVenue = venues[Math.floor(Math.random() * venues.length)];
+    const randomTitle =
+      campTitles[Math.floor(Math.random() * campTitles.length)];
+
+    camps.push({
+      title: `${randomTitle} - ${org.name} [ONGOING TODAY]`,
+      organizer: org._id,
+      date: new Date(today), // Today's date
+      startTime: ["08:00", "09:00"][Math.floor(Math.random() * 2)],
+      endTime: ["16:00", "17:00", "18:00"][Math.floor(Math.random() * 3)],
+      venue: `${randomVenue}, ${org.city}`,
+      city: org.city,
+      address: org.address,
+      contactPerson: {
+        name: org.contactPerson.name,
+        phone: org.contactPerson.phone,
+        email: org.email,
+      },
+      expectedDonors: Math.floor(Math.random() * 100) + 50,
+      registeredDonors: [],
+      description: `Join us TODAY for a ${randomTitle.toLowerCase()} organized by ${
+        org.name
+      }. Every donation can save up to 3 lives. Walk-ins welcome! Camp is ONGOING right now!`,
+      requirements: `Age: 18-65 years, Weight: Minimum 50 kg, No recent illness or medication, Bring valid ID proof, Have a light meal before donation`,
+      facilities: [
+        "Refreshments provided",
+        "Medical team on-site",
+        "Free health checkup",
+        "Parking available",
+      ],
+      isApproved: true,
+    });
+  }
+
+  // Second, create camps for TOMORROW (October 21, 2025) 9 AM - 4 PM
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  console.log(
+    `   Creating camps for TOMORROW (${tomorrow.toDateString()}) 9 AM - 4 PM...`
+  );
+
+  // Create 3-4 camps for tomorrow from different organizations
+  const numTomorrowCamps = Math.floor(Math.random() * 2) + 3; // 3-4 camps
+  const tomorrowOrgStartIndex = numOngoingCamps; // Continue from where we left off
+  for (
+    let i = 0;
+    i < numTomorrowCamps && tomorrowOrgStartIndex + i < verifiedOrgs.length;
+    i++
+  ) {
+    const org = verifiedOrgs[tomorrowOrgStartIndex + i];
+    const randomVenue = venues[Math.floor(Math.random() * venues.length)];
+    const randomTitle =
+      campTitles[Math.floor(Math.random() * campTitles.length)];
+
+    camps.push({
+      title: `${randomTitle} - ${org.name} [TOMORROW 9AM-4PM]`,
+      organizer: org._id,
+      date: new Date(tomorrow), // Tomorrow's date
+      startTime: "09:00", // 9 AM
+      endTime: "16:00", // 4 PM
+      venue: `${randomVenue}, ${org.city}`,
+      city: org.city,
+      address: org.address,
+      contactPerson: {
+        name: org.contactPerson.name,
+        phone: org.contactPerson.phone,
+        email: org.email,
+      },
+      expectedDonors: Math.floor(Math.random() * 100) + 50,
+      registeredDonors: [],
+      description: `Join us TOMORROW (${tomorrow.toDateString()}) from 9 AM to 4 PM for a ${randomTitle.toLowerCase()} organized by ${
+        org.name
+      }. Every donation can save up to 3 lives. Register now!`,
+      requirements: `Age: 18-65 years, Weight: Minimum 50 kg, No recent illness or medication, Bring valid ID proof, Have a light meal before donation`,
+      facilities: [
+        "Refreshments provided",
+        "Medical team on-site",
+        "Free health checkup",
+        "Parking available",
+        "AC venue",
+      ],
+      isApproved: true,
+    });
+  }
+
+  // Create camps for verified organizations with various dates
   for (const org of verifiedOrgs) {
     const numCamps = Math.floor(Math.random() * 3) + 2; // 2-4 camps per org
 
     for (let i = 0; i < numCamps; i++) {
-      // Only create upcoming camps (future dates - validation requires future dates)
-      const daysOffset = Math.floor(Math.random() * 120) + 1; // 1 to 120 days in the future
+      // Create camps with various dates - including past, today, and future
+      // This will allow testing of all camp statuses
+      const daysOffset = Math.floor(Math.random() * 120) - 30; // -30 to +90 days
       const campDate = new Date();
       campDate.setDate(campDate.getDate() + daysOffset);
 
-      const status =
-        daysOffset <= 7
-          ? "ongoing" // Within next week
-          : "upcoming"; // Future camps
+      // Don't set status here - let the model's updateStatus() method handle it dynamically
+      // Status will be automatically determined based on the date
 
       const randomVenue = venues[Math.floor(Math.random() * venues.length)];
       const randomTitle =
@@ -1004,7 +1101,7 @@ const createBloodCamps = async (organizations, bloodBanks) => {
         },
         expectedDonors: Math.floor(Math.random() * 100) + 50,
         registeredDonors: [], // Will be empty array for now
-        status: status,
+        // Don't set status - it will default to "upcoming" and be updated dynamically
         description: `Join us for a ${randomTitle.toLowerCase()} organized by ${
           org.name
         }. Every donation can save up to 3 lives. Walk-ins welcome!`,
@@ -1021,15 +1118,42 @@ const createBloodCamps = async (organizations, bloodBanks) => {
 
   const createdCamps = await BloodCamp.insertMany(camps);
   console.log(`✅ Created ${createdCamps.length} blood camps`);
-  console.log(
-    `   📅 Upcoming: ${camps.filter((c) => c.status === "upcoming").length}`
-  );
-  console.log(
-    `   🔄 Ongoing: ${camps.filter((c) => c.status === "ongoing").length}`
-  );
-  console.log(
-    `   ✅ Completed: ${camps.filter((c) => c.status === "completed").length}`
-  );
+
+  // Count camps by date to show distribution
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+
+  const tomorrowDate = new Date(todayDate);
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+  const ongoingCount = createdCamps.filter((c) => {
+    const campDate = new Date(c.date);
+    campDate.setHours(0, 0, 0, 0);
+    return campDate.getTime() === todayDate.getTime();
+  }).length;
+
+  const tomorrowCount = createdCamps.filter((c) => {
+    const campDate = new Date(c.date);
+    campDate.setHours(0, 0, 0, 0);
+    return campDate.getTime() === tomorrowDate.getTime();
+  }).length;
+
+  const upcomingCount = createdCamps.filter((c) => {
+    const campDate = new Date(c.date);
+    campDate.setHours(0, 0, 0, 0);
+    return campDate.getTime() > tomorrowDate.getTime();
+  }).length;
+
+  const completedCount = createdCamps.filter((c) => {
+    const campDate = new Date(c.date);
+    campDate.setHours(0, 0, 0, 0);
+    return campDate.getTime() < todayDate.getTime();
+  }).length;
+
+  console.log(`   📅 Ongoing (Today - Oct 20): ${ongoingCount} camps`);
+  console.log(`   📅 Tomorrow (Oct 21, 9AM-4PM): ${tomorrowCount} camps`);
+  console.log(`   📅 Upcoming (Future): ${upcomingCount} camps`);
+  console.log(`   📅 Completed (Past): ${completedCount} camps`);
 
   return createdCamps;
 };

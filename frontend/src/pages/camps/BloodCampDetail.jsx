@@ -132,7 +132,7 @@ const BloodCampDetail = () => {
   const canRegister = () => {
     if (!camp) return false;
     return (
-      camp.status === "upcoming" &&
+      (camp.status === "upcoming" || camp.status === "ongoing") &&
       !isUserRegistered() &&
       !isCampFull() &&
       userType === "user"
@@ -383,13 +383,17 @@ const BloodCampDetail = () => {
                 )}
               </div>
 
-              {camp.status === "upcoming" && user && userType === "user" ? (
+              {(camp.status === "upcoming" || camp.status === "ongoing") &&
+              user &&
+              userType === "user" ? (
                 <button
                   onClick={
                     isUserRegistered() ? handleUnregister : handleRegister
                   }
                   disabled={
-                    registering || (isCampFull() && !isUserRegistered())
+                    registering ||
+                    (isCampFull() && !isUserRegistered()) ||
+                    (isUserRegistered() && camp.status === "ongoing")
                   }
                   className={`w-full py-3 rounded-lg font-bold transition-colors disabled:cursor-not-allowed ${
                     isUserRegistered()
@@ -402,12 +406,17 @@ const BloodCampDetail = () => {
                       ? "Unregistering..."
                       : "Registering..."
                     : isUserRegistered()
-                    ? "✓ Registered - Click to Unregister"
+                    ? camp.status === "ongoing"
+                      ? "✓ Registered - Camp is Ongoing"
+                      : "✓ Registered - Click to Unregister"
                     : isCampFull()
                     ? "Camp is Full"
+                    : camp.status === "ongoing"
+                    ? "Register Now - Camp is Ongoing!"
                     : "Register for This Camp"}
                 </button>
-              ) : camp.status === "upcoming" && !user ? (
+              ) : (camp.status === "upcoming" || camp.status === "ongoing") &&
+                !user ? (
                 <Link
                   to="/login/user"
                   className="block text-center w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition-colors"
@@ -424,53 +433,57 @@ const BloodCampDetail = () => {
                 </div>
               ) : null}
 
-              {!isUserRegistered() && camp.status === "upcoming" && (
-                <p className="text-xs text-gray-600 text-center mt-3">
-                  By registering, you commit to attend this blood donation camp
-                </p>
-              )}
+              {!isUserRegistered() &&
+                (camp.status === "upcoming" || camp.status === "ongoing") && (
+                  <p className="text-xs text-gray-600 text-center mt-3">
+                    {camp.status === "ongoing"
+                      ? "Camp is ongoing! Register and join us today!"
+                      : "By registering, you commit to attend this blood donation camp"}
+                  </p>
+                )}
 
               {/* QR Code Section - Show only if user is registered */}
-              {isUserRegistered() && camp.status === "upcoming" && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <button
-                    onClick={() => setShowQR(!showQR)}
-                    className="w-full flex items-center justify-center space-x-2 bg-blue-50 text-blue-700 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors"
-                  >
-                    <QrCode className="h-5 w-5" />
-                    <span>{showQR ? "Hide" : "Show"} QR Code</span>
-                  </button>
+              {isUserRegistered() &&
+                (camp.status === "upcoming" || camp.status === "ongoing") && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <button
+                      onClick={() => setShowQR(!showQR)}
+                      className="w-full flex items-center justify-center space-x-2 bg-blue-50 text-blue-700 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors"
+                    >
+                      <QrCode className="h-5 w-5" />
+                      <span>{showQR ? "Hide" : "Show"} QR Code</span>
+                    </button>
 
-                  {showQR && (
-                    <div className="mt-4 p-4 bg-white border-2 border-blue-200 rounded-lg">
-                      <div className="text-center">
-                        <div className="bg-white p-4 rounded-lg inline-block">
-                          <QRCode
-                            id="qr-code-svg"
-                            value={generateQRData()}
-                            size={200}
-                            level="H"
-                            includeMargin={true}
-                          />
+                    {showQR && (
+                      <div className="mt-4 p-4 bg-white border-2 border-blue-200 rounded-lg">
+                        <div className="text-center">
+                          <div className="bg-white p-4 rounded-lg inline-block">
+                            <QRCode
+                              id="qr-code-svg"
+                              value={generateQRData()}
+                              size={200}
+                              level="H"
+                              includeMargin={true}
+                            />
+                          </div>
+                          <p className="text-sm text-gray-700 font-medium mt-3 mb-2">
+                            Your Registration QR Code
+                          </p>
+                          <p className="text-xs text-gray-600 mb-4">
+                            Show this at the camp entrance for quick check-in
+                          </p>
+                          <button
+                            onClick={downloadQRCode}
+                            className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors mx-auto"
+                          >
+                            <Download className="h-4 w-4" />
+                            <span>Download QR</span>
+                          </button>
                         </div>
-                        <p className="text-sm text-gray-700 font-medium mt-3 mb-2">
-                          Your Registration QR Code
-                        </p>
-                        <p className="text-xs text-gray-600 mb-4">
-                          Show this at the camp entrance for quick check-in
-                        </p>
-                        <button
-                          onClick={downloadQRCode}
-                          className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors mx-auto"
-                        >
-                          <Download className="h-4 w-4" />
-                          <span>Download QR</span>
-                        </button>
                       </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
             </Card>
 
             {/* Contact Information */}

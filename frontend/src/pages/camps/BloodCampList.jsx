@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
@@ -22,46 +22,21 @@ const BloodCampList = () => {
   const { user } = useSelector((state) => state.auth);
   const [camps, setCamps] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    city: "",
-    status: "upcoming",
-    search: "",
-  });
+  const [searchTerm, setSearchTerm] = useState(""); // For client-side search
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("upcoming");
 
   useEffect(() => {
     fetchCamps();
-  }, [filters]);
+  }, []); // Only fetch once on mount
 
   const fetchCamps = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams();
-      if (filters.city) params.append("city", filters.city);
-      if (filters.status) params.append("status", filters.status);
-      if (filters.search) params.append("search", filters.search);
-
-      const response = await axios.get(`/camps?${params.toString()}`);
+      // Fetch all camps without filters - we'll filter client-side
+      const response = await axios.get(`/camps`);
       if (response.data.success) {
-        // Sort camps: ongoing first, then upcoming, then completed
-        const sortedCamps = response.data.data.sort((a, b) => {
-          const statusOrder = {
-            ongoing: 0,
-            upcoming: 1,
-            completed: 2,
-            cancelled: 3,
-          };
-          const statusCompare =
-            (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
-
-          // If same status, sort by date (earliest first)
-          if (statusCompare === 0) {
-            return new Date(a.date) - new Date(b.date);
-          }
-
-          return statusCompare;
-        });
-
-        setCamps(sortedCamps);
+        setCamps(response.data.data);
       }
     } catch (error) {
       console.error("Error fetching camps:", error);
@@ -69,6 +44,65 @@ const BloodCampList = () => {
       setLoading(false);
     }
   };
+
+  // Client-side filtering
+  const filteredCamps = camps.filter((camp) => {
+    // Update status dynamically
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const campDate = new Date(camp.date);
+    campDate.setHours(0, 0, 0, 0);
+
+    let currentStatus = camp.status;
+    if (campDate < today) {
+      currentStatus = "completed";
+    } else if (campDate.getTime() === today.getTime()) {
+      currentStatus = "ongoing";
+    } else {
+      currentStatus = "upcoming";
+    }
+
+    // Search filter (title, description, venue, city)
+    const matchesSearch =
+      !searchTerm ||
+      camp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      camp.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      camp.venue.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      camp.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      camp.organizerDetails?.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    // City filter
+    const matchesCity = !selectedCity || camp.city === selectedCity;
+
+    // Status filter
+    const matchesStatus = !selectedStatus || currentStatus === selectedStatus;
+
+    return matchesSearch && matchesCity && matchesStatus;
+  });
+
+  // Sort filtered camps
+  const sortedCamps = filteredCamps.sort((a, b) => {
+    const statusOrder = {
+      ongoing: 0,
+      upcoming: 1,
+      completed: 2,
+      cancelled: 3,
+    };
+    const statusCompare =
+      (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
+
+    // If same status, sort by date (earliest first)
+    if (statusCompare === 0) {
+      return new Date(a.date) - new Date(b.date);
+    }
+
+    return statusCompare;
+  });
+
+  // Get unique cities from camps
+  const cities = [...new Set(camps.map((camp) => camp.city))].sort();
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -139,60 +173,86 @@ const BloodCampList = () => {
 
           {/* Filters */}
           <Card className="mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-4">
               {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
                 <input
                   type="text"
-                  placeholder="Search camps..."
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters({ ...filters, search: e.target.value })
-                  }
+                  placeholder="Search by camp name, venue, organizer, or city..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="input-field pl-11"
                 />
               </div>
 
-              {/* City Filter */}
-              <div className="relative">
-                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                <input
-                  type="text"
-                  placeholder="Filter by city..."
-                  value={filters.city}
-                  onChange={(e) =>
-                    setFilters({ ...filters, city: e.target.value })
-                  }
-                  className="input-field pl-11"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* City Filter */}
+                <div>
+                  <label htmlFor="city" className="label">
+                    Filter by City
+                  </label>
+                  <select
+                    id="city"
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                    className="input-field"
+                  >
+                    <option value="">All Cities</option>
+                    {cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label htmlFor="status" className="label">
+                    Filter by Status
+                  </label>
+                  <select
+                    id="status"
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="input-field"
+                  >
+                    <option value="">All Status</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
               </div>
 
-              {/* Status Filter */}
-              <div className="relative">
-                <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                <select
-                  value={filters.status}
-                  onChange={(e) =>
-                    setFilters({ ...filters, status: e.target.value })
-                  }
-                  className="input-field pl-11"
-                >
-                  <option value="">All Status</option>
-                  <option value="upcoming">Upcoming</option>
-                  <option value="ongoing">Ongoing</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
+              {/* Clear filters button */}
+              {(searchTerm || selectedCity || selectedStatus) && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => {
+                      setSearchTerm("");
+                      setSelectedCity("");
+                      setSelectedStatus("");
+                    }}
+                    className="text-sm text-red-600 hover:text-red-700 font-semibold"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              )}
             </div>
           </Card>
 
           {/* Results Count */}
           <div className="mb-6">
             <p className="text-gray-700 font-medium">
-              Found{" "}
-              <span className="font-bold text-red-600">{camps.length}</span>{" "}
-              blood donation camps
+              Showing{" "}
+              <span className="font-bold text-red-600">
+                {sortedCamps.length}
+              </span>{" "}
+              of <strong className="text-gray-900">{camps.length}</strong> blood
+              donation camps
             </p>
           </div>
 
@@ -201,7 +261,7 @@ const BloodCampList = () => {
             <div className="flex justify-center py-12">
               <Loader />
             </div>
-          ) : camps.length === 0 ? (
+          ) : sortedCamps.length === 0 ? (
             <Card className="text-center py-12">
               <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -219,7 +279,7 @@ const BloodCampList = () => {
             </Card>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {camps.map((camp) => (
+              {sortedCamps.map((camp) => (
                 <Card
                   key={camp._id}
                   className="hover:shadow-xl transition-shadow"
