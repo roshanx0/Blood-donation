@@ -252,16 +252,14 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
   };
 
   const handleScanSuccess = async (decodedText) => {
-    console.log(
-      "🔍 handleScanSuccess called, scanning:",
-      scanning,
-      "processing:",
-      processing
+    addDebugLog(
+      `🔍 Scan called, scanning:${scanning}, processing:${processing}`,
+      "info"
     );
 
     // Prevent multiple scans - only process if currently scanning and not already processing
     if (!scanning || processing) {
-      console.log("⏭️ Skipping scan - not ready");
+      addDebugLog("⏭️ Skipping - not ready", "warning");
       return;
     }
 
@@ -271,12 +269,12 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
       lastScannedRef.current?.code === decodedText &&
       now - lastScannedRef.current?.timestamp < 2000
     ) {
-      console.log("⏭️ Skipping duplicate scan");
+      addDebugLog("⏭️ Duplicate scan ignored", "warning");
       return; // Ignore duplicate scan
     }
 
     try {
-      console.log("🔄 Processing QR code...");
+      addDebugLog("🔄 Processing QR...", "info");
 
       // Mark as processing and update last scanned
       setProcessing(true);
@@ -286,26 +284,26 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
       setScanning(false); // Set state immediately to prevent re-entry
       await stopScanner();
 
-      console.log("✅ Scanner stopped, parsing QR data...");
+      addDebugLog("✅ Stopped, parsing...", "info");
 
       // Parse QR data
       const qrData = JSON.parse(decodedText);
-      console.log("✅ QR data parsed:", qrData);
+      addDebugLog(`✅ Parsed: type=${qrData.type}`, "success");
 
       // Call parent callback
       if (onScanSuccess) {
-        console.log("📤 Calling parent callback...");
+        addDebugLog("📤 Calling parent...", "info");
         await onScanSuccess(qrData);
-        console.log("✅ Parent callback completed");
+        addDebugLog("✅ Parent done", "success");
       }
     } catch (err) {
-      console.error("❌ Error processing QR code:", err);
+      addDebugLog(`❌ Error: ${err.message}`, "error");
       setError("Invalid QR code format");
       setScanning(false);
       // Don't auto-restart on error
     } finally {
       setProcessing(false);
-      console.log("✅ Processing complete");
+      addDebugLog("✅ Complete", "success");
     }
   };
 
