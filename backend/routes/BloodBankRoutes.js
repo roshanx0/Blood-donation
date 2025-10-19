@@ -14,7 +14,7 @@ const { protect, approvedBloodBankOnly } = require("../middleware/auth");
 router.get("/", getAllBloodBanks);
 router.get("/:id/inventory", getInventory);
 
-// Protected routes (blood bank only)
+// Protected routes (blood bank only - must be approved)
 router.use(protect);
 router.use(approvedBloodBankOnly);
 

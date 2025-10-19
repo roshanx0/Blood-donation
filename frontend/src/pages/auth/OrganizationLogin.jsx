@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Building2, Mail, Lock } from "lucide-react";
 import Card from "../../components/Card";
@@ -8,6 +8,7 @@ import { loginOrganization } from "../../redux/slices/authSlice";
 
 const OrganizationLogin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { isLoading, isAuthenticated, userType } = useSelector(
     (state) => state.auth
@@ -18,12 +19,19 @@ const OrganizationLogin = () => {
     password: "",
   });
 
+  // Get the page user was trying to access before login
+  const from = location.state?.from?.pathname || null;
+
   useEffect(() => {
     // Redirect if already logged in as organization
     if (isAuthenticated && userType === "organization") {
-      navigate("/organization/dashboard");
+      if (from) {
+        navigate(from, { replace: true });
+      } else {
+        navigate("/organization/dashboard");
+      }
     }
-  }, [isAuthenticated, userType, navigate]);
+  }, [isAuthenticated, userType, navigate, from]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,7 +42,11 @@ const OrganizationLogin = () => {
     const result = await dispatch(loginOrganization(formData));
 
     if (result.type === "auth/loginOrganization/fulfilled") {
-      navigate("/organization/dashboard");
+      if (from) {
+        navigate(from, { replace: true });
+      } else {
+        navigate("/organization/dashboard");
+      }
     }
   };
 

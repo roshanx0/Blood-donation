@@ -42,7 +42,26 @@ const BloodCampList = () => {
 
       const response = await axios.get(`/camps?${params.toString()}`);
       if (response.data.success) {
-        setCamps(response.data.data);
+        // Sort camps: ongoing first, then upcoming, then completed
+        const sortedCamps = response.data.data.sort((a, b) => {
+          const statusOrder = {
+            ongoing: 0,
+            upcoming: 1,
+            completed: 2,
+            cancelled: 3,
+          };
+          const statusCompare =
+            (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
+
+          // If same status, sort by date (earliest first)
+          if (statusCompare === 0) {
+            return new Date(a.date) - new Date(b.date);
+          }
+
+          return statusCompare;
+        });
+
+        setCamps(sortedCamps);
       }
     } catch (error) {
       console.error("Error fetching camps:", error);

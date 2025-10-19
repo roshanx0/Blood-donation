@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerOrganization } from "../../redux/slices/authSlice";
 import {
   Building2,
   Mail,
@@ -13,11 +15,11 @@ import {
 } from "lucide-react";
 import Card from "../../components/Card";
 import ErrorMessage from "../../components/ErrorMessage";
-import axios from "../../utils/axios";
 
 const OrganizationRegister = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { isLoading, error: reduxError } = useSelector((state) => state.auth);
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -55,8 +57,6 @@ const OrganizationRegister = () => {
       return;
     }
 
-    setLoading(true);
-
     try {
       const {
         confirmPassword,
@@ -72,22 +72,13 @@ const OrganizationRegister = () => {
         phone: contactPersonPhone,
       };
 
-      const response = await axios.post(
-        "/auth/organization/register",
-        dataToSend
-      );
+      const result = await dispatch(registerOrganization(dataToSend)).unwrap();
 
-      if (response.data.success) {
-        localStorage.setItem("token", response.data.data.token);
-        localStorage.setItem("userType", "organization");
+      if (result) {
         navigate("/organization/dashboard");
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Registration failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
+      setError(err.message || "Registration failed. Please try again.");
     }
   };
 
@@ -385,10 +376,10 @@ const OrganizationRegister = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {loading ? "Registering..." : "Register Organization"}
+              {isLoading ? "Registering..." : "Register Organization"}
             </button>
 
             <p className="text-center text-sm text-gray-700">

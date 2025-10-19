@@ -1,13 +1,28 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, userType, user } = useSelector(
     (state) => state.auth
   );
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    // Redirect to appropriate login page based on allowed roles
+    let loginPath = "/login/user"; // Default to user login
+
+    if (allowedRoles && allowedRoles.length > 0) {
+      if (allowedRoles.includes("organization")) {
+        loginPath = "/login/organization";
+      } else if (allowedRoles.includes("bloodbank")) {
+        loginPath = "/login/bloodbank";
+      } else if (allowedRoles.includes("admin")) {
+        loginPath = "/login/user"; // Admin login through user login
+      }
+    }
+
+    // Save the intended destination
+    return <Navigate to={loginPath} state={{ from: location }} replace />;
   }
 
   // Check if user has the required role

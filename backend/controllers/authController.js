@@ -184,7 +184,8 @@ exports.loginBloodBank = async (req, res) => {
     if (!bloodBank.isApproved) {
       return res.status(403).json({
         success: false,
-        message: "Your blood bank registration is pending admin approval",
+        message:
+          "Your blood bank registration is pending admin approval. You will be able to login once approved.",
       });
     }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginBloodBank } from "../../redux/slices/authSlice";
 import { Mail, Lock, LogIn, Building2, AlertCircle } from "lucide-react";
@@ -15,9 +15,10 @@ const BloodBankLogin = () => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Don't use useEffect for redirect - it causes issues
-  // Users can manually visit login page even if logged in
+  // Get the page user was trying to access before login
+  const from = location.state?.from?.pathname || null;
 
   const handleChange = (e) => {
     setFormData({
@@ -32,7 +33,11 @@ const BloodBankLogin = () => {
 
     // Only navigate if login was successful
     if (result.type === "auth/loginBloodBank/fulfilled") {
-      navigate("/bloodbank/dashboard");
+      if (from) {
+        navigate(from, { replace: true });
+      } else {
+        navigate("/bloodbank/dashboard");
+      }
     }
   };
 

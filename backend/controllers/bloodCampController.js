@@ -147,10 +147,7 @@ exports.getAllBloodCamps = async (req, res) => {
       query.city = { $regex: city, $options: "i" };
     }
 
-    if (status) {
-      query.status = status;
-    }
-
+    // Don't apply status filter in query - we'll filter after updating statuses
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: "i" } },
@@ -159,10 +156,20 @@ exports.getAllBloodCamps = async (req, res) => {
       ];
     }
 
-    const camps = await BloodCamp.find(query)
+    let camps = await BloodCamp.find(query)
       .populate("organizer", "name type email phone")
       .populate("bloodBankPartner", "name phone address")
       .sort({ date: 1 });
+
+    // Update status for each camp based on current date
+    camps.forEach((camp) => {
+      camp.updateStatus();
+    });
+
+    // Apply status filter AFTER updating statuses
+    if (status) {
+      camps = camps.filter((camp) => camp.status === status);
+    }
 
     res.status(200).json({
       success: true,
@@ -194,6 +201,9 @@ exports.getBloodCampById = async (req, res) => {
         message: "Blood camp not found",
       });
     }
+
+    // Update status based on current date
+    camp.updateStatus();
 
     res.status(200).json({
       success: true,

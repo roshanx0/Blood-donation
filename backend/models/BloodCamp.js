@@ -144,6 +144,44 @@ bloodCampSchema.methods.isUserRegistered = function (userId) {
   );
 };
 
+// Auto-update status based on date and time
+bloodCampSchema.methods.updateStatus = function () {
+  const now = new Date();
+  const campDate = new Date(this.date);
+
+  // Set to start of camp day
+  campDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Don't change if manually set to cancelled
+  if (this.status === "cancelled") {
+    return this.status;
+  }
+
+  // If camp date has passed (not today), mark as completed
+  if (campDate < today) {
+    this.status = "completed";
+  }
+  // If camp is today, mark as ongoing
+  else if (campDate.getTime() === today.getTime()) {
+    this.status = "ongoing";
+  }
+  // If camp is in the future, mark as upcoming
+  else if (campDate > today) {
+    this.status = "upcoming";
+  }
+
+  return this.status;
+};
+
+// Pre-find middleware to auto-update status
+bloodCampSchema.pre(/^find/, function (next) {
+  // Update status for all camps being queried
+  this.setOptions({ runValidators: false });
+  next();
+});
+
 const BloodCamp = mongoose.model("BloodCamp", bloodCampSchema);
 
 module.exports = BloodCamp;
