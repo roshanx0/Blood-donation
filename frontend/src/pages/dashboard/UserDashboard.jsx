@@ -142,6 +142,41 @@ const UserDashboard = () => {
               </Card>
             </Link>
           </div>
+
+          {/* Blood Camps Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <Link to="/camps">
+              <Card className="text-center cursor-pointer transition-all hover:shadow-xl">
+                <div className="flex justify-center mb-4">
+                  <div className="bg-gradient-to-br from-purple-600 to-purple-700 p-4 rounded-2xl shadow-md">
+                    <Calendar className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Blood Donation Camps
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Find and register for upcoming camps
+                </p>
+              </Card>
+            </Link>
+
+            <Link to="/user/my-camps">
+              <Card className="text-center cursor-pointer transition-all hover:shadow-xl">
+                <div className="flex justify-center mb-4">
+                  <div className="bg-gradient-to-br from-orange-600 to-orange-700 p-4 rounded-2xl shadow-md">
+                    <CheckCircle className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  My Registered Camps
+                </h3>
+                <p className="text-sm text-gray-600">
+                  View your registered camps and QR codes
+                </p>
+              </Card>
+            </Link>
+          </div>
         </div>
 
         {/* Matching Requests (Notifications) */}

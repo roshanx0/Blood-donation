@@ -15,6 +15,7 @@ import {
   Settings,
   Bell,
   ChevronLeft,
+  CheckCircle,
 } from "lucide-react";
 
 const DashboardLayout = ({ children, activeTab, userType }) => {
@@ -60,8 +61,14 @@ const DashboardLayout = ({ children, activeTab, userType }) => {
             path: "/user/donation-history",
           },
           {
+            id: "my-camps",
+            label: "My Camps",
+            icon: CheckCircle,
+            path: "/user/my-camps",
+          },
+          {
             id: "blood-camps",
-            label: "Blood Camps",
+            label: "All Blood Camps",
             icon: Calendar,
             path: "/camps",
           },

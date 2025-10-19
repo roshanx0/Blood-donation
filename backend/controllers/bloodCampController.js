@@ -574,3 +574,50 @@ exports.verifyAttendance = async (req, res) => {
     });
   }
 };
+
+// @desc    Get camps registered by current user
+// @route   GET /api/camps/my-registered-camps
+// @access  Private (User only)
+exports.getMyRegisteredCamps = async (req, res) => {
+  try {
+    // Find all camps where current user is registered
+    const camps = await BloodCamp.find({
+      "registeredDonors.donor": req.user.id,
+    })
+      .populate("organizer", "name type")
+      .populate("bloodBankPartner", "name")
+      .sort({ date: 1 }); // Sort by date ascending
+
+    // Add registration info to each camp
+    const campsWithRegistrationInfo = camps.map((camp) => {
+      const campObj = camp.toObject();
+      const registration = camp.registeredDonors.find(
+        (r) => r.donor.toString() === req.user.id
+      );
+
+      // Get user details for QR generation
+      const User = require("../models/User");
+
+      return {
+        ...campObj,
+        registrationInfo: {
+          donor: req.user.id,
+          registeredAt: registration?.registeredAt,
+          attended: registration?.attended || false,
+        },
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      count: campsWithRegistrationInfo.length,
+      data: campsWithRegistrationInfo,
+    });
+  } catch (error) {
+    console.error("Get my registered camps error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error while fetching registered camps",
+    });
+  }
+};

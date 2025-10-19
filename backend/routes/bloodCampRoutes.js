@@ -11,6 +11,7 @@ const {
   updateBloodCamp,
   deleteBloodCamp,
   verifyAttendance,
+  getMyRegisteredCamps,
 } = require("../controllers/bloodCampController");
 const { protect } = require("../middleware/auth");
 
@@ -21,6 +22,7 @@ router.get("/", getAllBloodCamps);
 router.post("/", protect, createBloodCamp);
 router.get("/organization/my-camps", protect, getMyCamps);
 router.get("/user/my-registrations", protect, getMyRegistrations);
+router.get("/my-registered-camps", protect, getMyRegisteredCamps);
 
 // Parameterized routes (must come after specific routes)
 router.get("/:id", getBloodCampById);

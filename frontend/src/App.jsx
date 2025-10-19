@@ -78,6 +78,9 @@ import BloodCampDetail from "./pages/camps/BloodCampDetail";
 import MyCamps from "./pages/organization/MyCamps";
 import CampScanner from "./pages/organization/CampScanner";
 
+// User Pages
+import UserMyCamps from "./pages/user/MyCamps";
+
 // Other Pages
 import EligibilityCriteria from "./pages/EligibilityCriteria";
 
@@ -171,6 +174,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["user"]}>
                 <DonationHistory />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user/my-camps"
+            element={
+              <ProtectedRoute allowedRoles={["user"]}>
+                <UserMyCamps />
               </ProtectedRoute>
             }
           />

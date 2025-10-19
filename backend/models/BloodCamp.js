@@ -15,10 +15,13 @@ const bloodCampSchema = new mongoose.Schema(
       required: [true, "Organizer is required"],
     },
     organizerDetails: {
-      name: String,
-      type: String,
-      phone: String,
-      email: String,
+      type: {
+        name: String,
+        type: String,
+        phone: String,
+        email: String,
+      },
+      _id: false,
     },
     description: {
       type: String,

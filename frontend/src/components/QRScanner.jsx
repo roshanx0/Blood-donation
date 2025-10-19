@@ -95,24 +95,43 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
     try {
       setError(null);
       setPermissionDenied(false);
+      console.log("🎥 Starting QR scanner...");
 
       // Check if scanner element exists
       if (!scannerRef.current) {
+        console.error("❌ Scanner element not found");
         setError("Scanner element not found. Please refresh the page.");
         return;
       }
 
+      console.log("✅ Scanner element found");
+
       // First, request camera permission explicitly
       const hasPermission = await requestCameraPermission();
       if (!hasPermission) {
+        console.error("❌ Camera permission denied");
         return; // Error already set in requestCameraPermission
       }
 
+      console.log("✅ Camera permission granted");
+
       // Initialize scanner
+      if (html5QrCodeRef.current) {
+        console.log("⚠️ Scanner already exists, stopping it first");
+        try {
+          await html5QrCodeRef.current.stop();
+          html5QrCodeRef.current.clear();
+        } catch (e) {
+          console.log("Note: Error stopping existing scanner (ignored):", e);
+        }
+      }
+
       html5QrCodeRef.current = new Html5Qrcode("qr-reader");
+      console.log("✅ Html5Qrcode instance created");
 
       // Get available cameras
       const cameras = await Html5Qrcode.getCameras();
+      console.log("📷 Available cameras:", cameras);
       setCameraList(cameras);
 
       if (cameras && cameras.length > 0) {
@@ -124,6 +143,10 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
             camera.label.toLowerCase().includes("environment")
         );
         const cameraId = backCamera ? backCamera.id : cameras[0].id;
+        console.log(
+          "📸 Selected camera:",
+          backCamera?.label || cameras[0].label
+        );
 
         // Start scanning with better config
         await html5QrCodeRef.current.start(
@@ -136,19 +159,26 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
           },
           (decodedText) => {
             // Success callback
+            console.log(
+              "✅ QR Code detected:",
+              decodedText.substring(0, 50) + "..."
+            );
             handleScanSuccess(decodedText);
           },
           (errorMessage) => {
             // Error callback (ignore - occurs frequently during scanning)
+            // console.log("Scanning...", errorMessage);
           }
         );
 
+        console.log("✅ Scanner started successfully");
         setScanning(true);
       } else {
+        console.error("❌ No cameras found");
         setError("No cameras found. Please check camera permissions.");
       }
     } catch (err) {
-      console.error("Scanner error:", err);
+      console.error("❌ Scanner error:", err);
 
       // Provide specific error messages
       if (
@@ -187,8 +217,16 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
   };
 
   const handleScanSuccess = async (decodedText) => {
+    console.log(
+      "🔍 handleScanSuccess called, scanning:",
+      scanning,
+      "processing:",
+      processing
+    );
+
     // Prevent multiple scans - only process if currently scanning and not already processing
     if (!scanning || processing) {
+      console.log("⏭️ Skipping scan - not ready");
       return;
     }
 
@@ -198,10 +236,13 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
       lastScannedRef.current?.code === decodedText &&
       now - lastScannedRef.current?.timestamp < 2000
     ) {
+      console.log("⏭️ Skipping duplicate scan");
       return; // Ignore duplicate scan
     }
 
     try {
+      console.log("🔄 Processing QR code...");
+
       // Mark as processing and update last scanned
       setProcessing(true);
       lastScannedRef.current = { code: decodedText, timestamp: now };
@@ -210,20 +251,26 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
       setScanning(false); // Set state immediately to prevent re-entry
       await stopScanner();
 
+      console.log("✅ Scanner stopped, parsing QR data...");
+
       // Parse QR data
       const qrData = JSON.parse(decodedText);
+      console.log("✅ QR data parsed:", qrData);
 
       // Call parent callback
       if (onScanSuccess) {
+        console.log("📤 Calling parent callback...");
         await onScanSuccess(qrData);
+        console.log("✅ Parent callback completed");
       }
     } catch (err) {
-      console.error("Error processing QR code:", err);
+      console.error("❌ Error processing QR code:", err);
       setError("Invalid QR code format");
       setScanning(false);
       // Don't auto-restart on error
     } finally {
       setProcessing(false);
+      console.log("✅ Processing complete");
     }
   };
 
