@@ -10,6 +10,7 @@ const {
   getMyRegistrations,
   updateBloodCamp,
   deleteBloodCamp,
+  verifyAttendance,
 } = require("../controllers/bloodCampController");
 const { protect } = require("../middleware/auth");
 
@@ -25,6 +26,7 @@ router.get("/user/my-registrations", protect, getMyRegistrations);
 router.get("/:id", getBloodCampById);
 router.post("/:id/register", protect, registerForCamp);
 router.post("/:id/unregister", protect, unregisterFromCamp);
+router.post("/:id/verify-attendance", protect, verifyAttendance);
 router.put("/:id", protect, updateBloodCamp);
 router.delete("/:id", protect, deleteBloodCamp);
 

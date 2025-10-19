@@ -14,6 +14,7 @@ const {
   toggleCampApproval,
   deleteCamp,
 } = require("../controllers/adminController");
+const { getAnalytics } = require("../controllers/analyticsController");
 const { protect, adminOnly } = require("../middleware/auth");
 
 // All routes require authentication and admin role
@@ -21,6 +22,7 @@ router.use(protect);
 router.use(adminOnly);
 
 router.get("/stats", getDashboardStats);
+router.get("/analytics", getAnalytics);
 router.get("/bloodbanks/pending", getPendingBloodBanks);
 router.get("/bloodbanks", getAllBloodBanks);
 router.put("/bloodbanks/:id/approve", approveBloodBank);

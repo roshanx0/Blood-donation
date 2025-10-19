@@ -76,6 +76,7 @@ import BloodCampDetail from "./pages/camps/BloodCampDetail";
 
 // Organization Pages
 import MyCamps from "./pages/organization/MyCamps";
+import CampScanner from "./pages/organization/CampScanner";
 
 // Other Pages
 import EligibilityCriteria from "./pages/EligibilityCriteria";
@@ -272,6 +273,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["organization"]}>
                 <MyCamps />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/organization/camps/:id/scan"
+            element={
+              <ProtectedRoute allowedRoles={["organization"]}>
+                <CampScanner />
               </ProtectedRoute>
             }
           />

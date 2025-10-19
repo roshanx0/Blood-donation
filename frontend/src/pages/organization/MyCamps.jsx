@@ -19,6 +19,7 @@ import {
   UserCheck,
   Phone,
   Mail,
+  QrCode,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -339,6 +340,16 @@ const MyCamps = () => {
                       <Eye className="h-4 w-4" />
                       <span>View</span>
                     </Link>
+                    {(camp.status === "upcoming" ||
+                      camp.status === "ongoing") && (
+                      <Link
+                        to={`/organization/camps/${camp._id}/scan`}
+                        className="flex items-center justify-center space-x-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                      >
+                        <QrCode className="h-4 w-4" />
+                        <span>Scan QR</span>
+                      </Link>
+                    )}
                     {camp.status === "upcoming" && (
                       <button
                         onClick={() => handleDelete(camp._id)}

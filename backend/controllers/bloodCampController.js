@@ -454,3 +454,123 @@ exports.deleteBloodCamp = async (req, res) => {
     });
   }
 };
+
+// @desc    Verify attendance and create donation record
+// @route   POST /api/camps/:id/verify-attendance
+// @access  Private (Organization only)
+exports.verifyAttendance = async (req, res) => {
+  try {
+    const { id: campId } = req.params;
+    const { userId, quantity = 450 } = req.body;
+
+    // Validate input
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    // Find camp and populate registered donors
+    const camp = await BloodCamp.findById(campId).populate(
+      "registeredDonors.donor",
+      "name email phone bloodType city"
+    );
+
+    if (!camp) {
+      return res.status(404).json({
+        success: false,
+        message: "Blood camp not found",
+      });
+    }
+
+    // Check if requester is the camp organizer
+    if (camp.organizer.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Only the camp organizer can verify attendance",
+      });
+    }
+
+    // Find the registration
+    const registrationIndex = camp.registeredDonors.findIndex(
+      (r) => r.donor._id.toString() === userId
+    );
+
+    if (registrationIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Donor is not registered for this camp",
+      });
+    }
+
+    const registration = camp.registeredDonors[registrationIndex];
+
+    // Check if already marked attended
+    if (registration.attended) {
+      return res.status(400).json({
+        success: false,
+        message: "Attendance already verified for this donor",
+        alreadyVerified: true,
+      });
+    }
+
+    // Get user details
+    const User = require("../models/User");
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Mark attendance
+    camp.registeredDonors[registrationIndex].attended = true;
+    await camp.save();
+
+    // Create donation history record
+    const DonationHistory = require("../models/DonationHistory");
+    const donation = await DonationHistory.create({
+      userId: user._id,
+      location: camp.venue,
+      date: camp.date,
+      quantity: quantity,
+      bloodType: user.bloodType,
+      status: "completed",
+      campId: camp._id,
+      notes: `Donated at ${camp.title}`,
+    });
+
+    // Update user stats
+    user.lastDonationDate = new Date();
+    user.totalDonations = (user.totalDonations || 0) + 1;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Attendance verified and donation recorded successfully",
+      data: {
+        donor: {
+          name: user.name,
+          bloodType: user.bloodType,
+          email: user.email,
+          phone: user.phone,
+        },
+        donation: donation,
+        camp: {
+          title: camp.title,
+          date: camp.date,
+          venue: camp.venue,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Verify attendance error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error while verifying attendance",
+    });
+  }
+};

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import QRCode from "react-qr-code";
 import {
   Calendar,
   Clock,
@@ -12,6 +13,8 @@ import {
   CheckCircle,
   ArrowLeft,
   AlertCircle,
+  Download,
+  QrCode,
 } from "lucide-react";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
@@ -25,6 +28,7 @@ const BloodCampDetail = () => {
   const [camp, setCamp] = useState(null);
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState(false);
+  const [showQR, setShowQR] = useState(false);
 
   useEffect(() => {
     fetchCampDetails();
@@ -133,6 +137,44 @@ const BloodCampDetail = () => {
       !isCampFull() &&
       userType === "user"
     );
+  };
+
+  const generateQRData = () => {
+    if (!user || !camp) return null;
+
+    const qrData = {
+      type: "camp-registration",
+      campId: camp._id,
+      userId: user._id,
+      userName: user.name,
+      bloodType: user.bloodType,
+      campTitle: camp.title,
+      timestamp: new Date().toISOString(),
+    };
+
+    return JSON.stringify(qrData);
+  };
+
+  const downloadQRCode = () => {
+    const svg = document.getElementById("qr-code-svg");
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `camp-qr-${camp.title.replace(/\s+/g, "-")}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
   if (loading) {
@@ -386,6 +428,48 @@ const BloodCampDetail = () => {
                 <p className="text-xs text-gray-600 text-center mt-3">
                   By registering, you commit to attend this blood donation camp
                 </p>
+              )}
+
+              {/* QR Code Section - Show only if user is registered */}
+              {isUserRegistered() && camp.status === "upcoming" && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={() => setShowQR(!showQR)}
+                    className="w-full flex items-center justify-center space-x-2 bg-blue-50 text-blue-700 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors"
+                  >
+                    <QrCode className="h-5 w-5" />
+                    <span>{showQR ? "Hide" : "Show"} QR Code</span>
+                  </button>
+
+                  {showQR && (
+                    <div className="mt-4 p-4 bg-white border-2 border-blue-200 rounded-lg">
+                      <div className="text-center">
+                        <div className="bg-white p-4 rounded-lg inline-block">
+                          <QRCode
+                            id="qr-code-svg"
+                            value={generateQRData()}
+                            size={200}
+                            level="H"
+                            includeMargin={true}
+                          />
+                        </div>
+                        <p className="text-sm text-gray-700 font-medium mt-3 mb-2">
+                          Your Registration QR Code
+                        </p>
+                        <p className="text-xs text-gray-600 mb-4">
+                          Show this at the camp entrance for quick check-in
+                        </p>
+                        <button
+                          onClick={downloadQRCode}
+                          className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors mx-auto"
+                        >
+                          <Download className="h-4 w-4" />
+                          <span>Download QR</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </Card>
 

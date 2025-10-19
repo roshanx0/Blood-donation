@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
+import AnalyticsDashboard from "../../components/AnalyticsDashboard";
 import toast from "react-hot-toast";
 
 const AdminDashboard = () => {
@@ -129,16 +130,16 @@ const AdminDashboard = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section with Welcome */}
-        <div className="mb-8 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* ===== SECTION 1: WELCOME HEADER ===== */}
+        <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold mb-2">
                 Admin Dashboard
               </h1>
               <p className="text-red-100 text-base sm:text-lg">
-                Welcome back! Here's your system overview
+                Welcome back, {user?.name}! Manage your blood donation system
               </p>
             </div>
             <div className="hidden md:block">
@@ -149,16 +150,19 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Overview Stats Section */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-5 flex items-center">
+        {/* ===== SECTION 2: QUICK STATS OVERVIEW ===== */}
+        <section>
+          <div className="flex items-center mb-6">
             <div className="w-1 h-8 bg-red-600 rounded-full mr-3"></div>
-            System Overview
-          </h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Quick Statistics
+            </h2>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card
               gradient
-              className="hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <div className="flex items-center space-x-4">
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-xl shadow-lg">
@@ -177,7 +181,7 @@ const AdminDashboard = () => {
 
             <Card
               gradient
-              className="hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <div className="flex items-center space-x-4">
                 <div className="bg-gradient-to-r from-green-600 to-green-700 p-4 rounded-xl shadow-lg">
@@ -196,26 +200,7 @@ const AdminDashboard = () => {
 
             <Card
               gradient
-              className="hover:shadow-2xl transition-all duration-300 hover:scale-105"
-            >
-              <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 rounded-xl shadow-lg">
-                  <Clock className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-gray-900">
-                    {stats?.pendingBloodBanks || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 font-medium">
-                    Pending Approvals
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card
-              gradient
-              className="hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <div className="flex items-center space-x-4">
                 <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-xl shadow-lg">
@@ -231,17 +216,249 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </Card>
-          </div>
-        </div>
 
-        {/* Blood Type Distribution */}
+            <Card
+              gradient
+              className="hover:shadow-xl transition-all duration-300 hover:scale-105"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 rounded-xl shadow-lg">
+                  <Clock className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    {stats?.pendingBloodBanks || 0}
+                  </div>
+                  <div className="text-sm text-gray-600 font-medium">
+                    Pending Approvals
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </section>
+
+        {/* ===== SECTION 3: PENDING APPROVALS (Priority Section) ===== */}
+        {pendingBloodBanks.length > 0 && (
+          <section>
+            <div className="flex items-center mb-6">
+              <div className="w-1 h-8 bg-yellow-500 rounded-full mr-3"></div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Pending Approvals
+              </h2>
+              <span className="ml-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                {pendingBloodBanks.length} Waiting
+              </span>
+            </div>
+
+            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 rounded-lg">
+              <div className="flex items-center">
+                <Clock className="h-6 w-6 text-yellow-600 mr-3" />
+                <div>
+                  <p className="text-sm font-semibold text-yellow-800">
+                    Action Required: {pendingBloodBanks.length} Blood Bank
+                    {pendingBloodBanks.length > 1 ? "s" : ""} Awaiting Review
+                  </p>
+                  <p className="text-xs text-yellow-700 mt-1">
+                    Please review and approve or reject the following
+                    applications
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {pendingBloodBanks.map((bloodBank) => (
+                <Card
+                  key={bloodBank._id}
+                  className="hover:shadow-xl transition-all duration-300 border-l-4 border-yellow-400"
+                >
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center mb-3">
+                        <Building2 className="h-6 w-6 text-yellow-600 mr-2" />
+                        <h3 className="text-xl font-bold text-gray-900">
+                          {bloodBank.name}
+                        </h3>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700 min-w-[80px]">
+                            Email:
+                          </span>
+                          <span className="text-gray-900">
+                            {bloodBank.email}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700 min-w-[80px]">
+                            Phone:
+                          </span>
+                          <span className="text-gray-900">
+                            {bloodBank.phone}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700 min-w-[80px]">
+                            City:
+                          </span>
+                          <span className="text-gray-900">
+                            {bloodBank.city}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700 min-w-[80px]">
+                            License:
+                          </span>
+                          <span className="text-gray-900">
+                            {bloodBank.licenseNumber}
+                          </span>
+                        </div>
+                        <div className="md:col-span-2 flex items-start">
+                          <span className="font-semibold text-gray-700 min-w-[80px]">
+                            Address:
+                          </span>
+                          <span className="text-gray-900">
+                            {bloodBank.address}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700 min-w-[80px]">
+                            Registered:
+                          </span>
+                          <span className="text-gray-900">
+                            {new Date(bloodBank.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex md:flex-col gap-3 md:min-w-[180px]">
+                      <button
+                        onClick={() => handleApprove(bloodBank._id)}
+                        className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-5 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
+                      >
+                        <CheckCircle className="h-5 w-5" />
+                        <span>Approve</span>
+                      </button>
+                      <button
+                        onClick={() => handleReject(bloodBank._id)}
+                        className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-5 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
+                      >
+                        <XCircle className="h-5 w-5" />
+                        <span>Reject</span>
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ===== SECTION 4: MANAGEMENT QUICK LINKS ===== */}
+        <section>
+          <div className="flex items-center mb-6">
+            <div className="w-1 h-8 bg-indigo-600 rounded-full mr-3"></div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Management Center
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <Link to="/admin/users">
+              <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group h-full">
+                <div className="flex flex-col items-center justify-center p-2">
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow mb-3">
+                    <Users className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                    Users
+                  </h3>
+                  <p className="text-xs text-gray-600">Manage all users</p>
+                </div>
+              </Card>
+            </Link>
+
+            <Link to="/admin/blood-banks">
+              <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group h-full">
+                <div className="flex flex-col items-center justify-center p-2">
+                  <div className="bg-gradient-to-r from-green-600 to-green-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow mb-3">
+                    <Building2 className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                    Blood Banks
+                  </h3>
+                  <p className="text-xs text-gray-600">Manage banks</p>
+                </div>
+              </Card>
+            </Link>
+
+            <Link to="/admin/organizations">
+              <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group h-full">
+                <div className="flex flex-col items-center justify-center p-2">
+                  <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow mb-3">
+                    <Building className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                    Organizations
+                  </h3>
+                  <p className="text-xs text-gray-600">Hospitals & NGOs</p>
+                </div>
+              </Card>
+            </Link>
+
+            <Link to="/admin/camps">
+              <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group h-full">
+                <div className="flex flex-col items-center justify-center p-2">
+                  <div className="bg-gradient-to-r from-orange-600 to-orange-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow mb-3">
+                    <Calendar className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                    Blood Camps
+                  </h3>
+                  <p className="text-xs text-gray-600">Manage camps</p>
+                </div>
+              </Card>
+            </Link>
+
+            <Link to="/requests">
+              <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group h-full">
+                <div className="flex flex-col items-center justify-center p-2">
+                  <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow mb-3">
+                    <BarChart3 className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                    Requests
+                  </h3>
+                  <p className="text-xs text-gray-600">Monitor requests</p>
+                </div>
+              </Card>
+            </Link>
+          </div>
+        </section>
+
+        {/* ===== SECTION 5: ANALYTICS DASHBOARD ===== */}
+        <section>
+          <div className="flex items-center mb-6">
+            <div className="w-1 h-8 bg-blue-600 rounded-full mr-3"></div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Analytics & Insights
+            </h2>
+          </div>
+          <AnalyticsDashboard />
+        </section>
+
+        {/* ===== SECTION 6: BLOOD TYPE DISTRIBUTION ===== */}
         {stats?.bloodTypeDistribution &&
           stats.bloodTypeDistribution.length > 0 && (
-            <div className="mb-10">
-              <h2 className="text-2xl font-bold text-gray-900 mb-5 flex items-center">
+            <section>
+              <div className="flex items-center mb-6">
                 <div className="w-1 h-8 bg-red-600 rounded-full mr-3"></div>
-                Blood Type Distribution
-              </h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Blood Type Distribution
+                </h2>
+              </div>
               <Card className="bg-gradient-to-br from-white to-red-50">
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
                   {stats.bloodTypeDistribution.map((item) => (
@@ -259,244 +476,8 @@ const AdminDashboard = () => {
                   ))}
                 </div>
               </Card>
-            </div>
+            </section>
           )}
-
-        {/* Management Section */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-5 flex items-center">
-            <div className="w-1 h-8 bg-red-600 rounded-full mr-3"></div>
-            Management & Actions
-          </h2>
-
-          {/* User & Blood Bank Management */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4 ml-1">
-              User & Blood Bank Management
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Link to="/admin/users">
-                <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group">
-                  <div className="flex justify-center mb-3">
-                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Users className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    Manage Users
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    View and manage all users
-                  </p>
-                </Card>
-              </Link>
-
-              <Link to="/admin/blood-banks">
-                <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group">
-                  <div className="flex justify-center mb-3">
-                    <div className="bg-gradient-to-r from-green-600 to-green-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Building2 className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    Blood Banks
-                  </h3>
-                  <p className="text-sm text-gray-600">Manage blood banks</p>
-                </Card>
-              </Link>
-
-              <Link to="/requests">
-                <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group">
-                  <div className="flex justify-center mb-3">
-                    <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
-                      <BarChart3 className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    Blood Requests
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Monitor blood requests
-                  </p>
-                </Card>
-              </Link>
-            </div>
-          </div>
-
-          {/* Organization & Camp Management */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-4 ml-1">
-              Organization & Camp Management
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Link to="/admin/organizations">
-                <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group">
-                  <div className="flex justify-center mb-3">
-                    <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Building className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    Organizations
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Verify hospitals, NGOs & colleges
-                  </p>
-                </Card>
-              </Link>
-
-              <Link to="/admin/camps">
-                <Card className="text-center cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group">
-                  <div className="flex justify-center mb-3">
-                    <div className="bg-gradient-to-r from-orange-600 to-orange-700 p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Calendar className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    Blood Camps
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Approve donation camps
-                  </p>
-                </Card>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Pending Approvals Section */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-5 flex items-center">
-            <div className="w-1 h-8 bg-yellow-500 rounded-full mr-3"></div>
-            Pending Approvals
-          </h2>
-
-          {pendingBloodBanks.length > 0 ? (
-            <div>
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 rounded-lg">
-                <div className="flex items-center">
-                  <Clock className="h-6 w-6 text-yellow-600 mr-3" />
-                  <div>
-                    <p className="text-sm font-semibold text-yellow-800">
-                      {pendingBloodBanks.length} Blood Bank
-                      {pendingBloodBanks.length > 1 ? "s" : ""} Awaiting Review
-                    </p>
-                    <p className="text-xs text-yellow-700 mt-1">
-                      Please review and approve or reject the following
-                      applications
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {pendingBloodBanks.map((bloodBank) => (
-                  <Card
-                    key={bloodBank._id}
-                    className="hover:shadow-xl transition-all duration-300 border-l-4 border-yellow-400"
-                  >
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center mb-3">
-                          <Building2 className="h-6 w-6 text-yellow-600 mr-2" />
-                          <h3 className="text-xl font-bold text-gray-900">
-                            {bloodBank.name}
-                          </h3>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 min-w-[80px]">
-                              Email:
-                            </span>
-                            <span className="text-gray-900">
-                              {bloodBank.email}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 min-w-[80px]">
-                              Phone:
-                            </span>
-                            <span className="text-gray-900">
-                              {bloodBank.phone}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 min-w-[80px]">
-                              City:
-                            </span>
-                            <span className="text-gray-900">
-                              {bloodBank.city}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 min-w-[80px]">
-                              License:
-                            </span>
-                            <span className="text-gray-900">
-                              {bloodBank.licenseNumber}
-                            </span>
-                          </div>
-                          <div className="md:col-span-2 flex items-center">
-                            <span className="font-semibold text-gray-700 min-w-[80px]">
-                              Address:
-                            </span>
-                            <span className="text-gray-900">
-                              {bloodBank.address}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 min-w-[80px]">
-                              Registered:
-                            </span>
-                            <span className="text-gray-900">
-                              {new Date(
-                                bloodBank.createdAt
-                              ).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col space-y-3 mt-4 md:mt-0 md:ml-6 md:min-w-[180px]">
-                        <button
-                          onClick={() => handleApprove(bloodBank._id)}
-                          className="flex items-center justify-center space-x-2 px-5 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
-                        >
-                          <CheckCircle className="h-5 w-5" />
-                          <span>Approve</span>
-                        </button>
-                        <button
-                          onClick={() => handleReject(bloodBank._id)}
-                          className="flex items-center justify-center space-x-2 px-5 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
-                        >
-                          <XCircle className="h-5 w-5" />
-                          <span>Reject</span>
-                        </button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <Card className="text-center py-12 bg-gradient-to-br from-green-50 to-white border-2 border-green-100">
-              <div className="flex justify-center mb-4">
-                <div className="bg-green-100 p-4 rounded-full">
-                  <CheckCircle className="h-16 w-16 text-green-600" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                All Caught Up!
-              </h3>
-              <p className="text-gray-600 text-lg">
-                There are no pending blood bank approvals at the moment.
-              </p>
-              <p className="text-gray-500 text-sm mt-2">
-                You'll see new applications here when blood banks register
-              </p>
-            </Card>
-          )}
-        </div>
       </div>
     </div>
   );
