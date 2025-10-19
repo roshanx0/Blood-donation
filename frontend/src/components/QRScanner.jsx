@@ -252,14 +252,12 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
   };
 
   const handleScanSuccess = async (decodedText) => {
-    addDebugLog(
-      `🔍 Scan called, scanning:${scanning}, processing:${processing}`,
-      "info"
-    );
+    addDebugLog(`🔍 Scan called, processing:${processing}`, "info");
 
-    // Prevent multiple scans - only process if currently scanning and not already processing
-    if (!scanning || processing) {
-      addDebugLog("⏭️ Skipping - not ready", "warning");
+    // Prevent duplicate processing - only check processing flag
+    // (Don't check scanning state due to React closure issues)
+    if (processing) {
+      addDebugLog("⏭️ Already processing another scan", "warning");
       return;
     }
 
