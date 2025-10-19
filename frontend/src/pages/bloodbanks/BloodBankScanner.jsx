@@ -47,7 +47,7 @@ const BloodBankScanner = () => {
       }
 
       // Fetch user details from backend to check eligibility
-      const response = await axios.get(`/users/${qrData.userId}`);
+      const response = await axios.get(`/auth/users/${qrData.userId}`);
 
       if (response.data.success) {
         const donor = response.data.data;
