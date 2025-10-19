@@ -221,7 +221,9 @@ exports.verifyDonation = async (req, res) => {
       if (daysSinceLastDonation < 90) {
         return res.status(400).json({
           success: false,
-          message: `Donor must wait ${90 - daysSinceLastDonation} more days before donating again`,
+          message: `Donor must wait ${
+            90 - daysSinceLastDonation
+          } more days before donating again`,
           daysRemaining: 90 - daysSinceLastDonation,
         });
       }
@@ -246,8 +248,13 @@ exports.verifyDonation = async (req, res) => {
     await user.save();
 
     // Update blood bank inventory
-    const bloodTypeKey = user.bloodType.replace('+', 'Positive').replace('-', 'Negative');
-    if (bloodBank.inventory && bloodBank.inventory[bloodTypeKey] !== undefined) {
+    const bloodTypeKey = user.bloodType
+      .replace("+", "Positive")
+      .replace("-", "Negative");
+    if (
+      bloodBank.inventory &&
+      bloodBank.inventory[bloodTypeKey] !== undefined
+    ) {
       bloodBank.inventory[bloodTypeKey] += 1;
       await bloodBank.save();
     }

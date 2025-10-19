@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   updateInventory,
@@ -7,20 +7,20 @@ const {
   getProfile,
   updateProfile,
   verifyDonation,
-} = require('../controllers/bloodBankController');
-const { protect, approvedBloodBankOnly } = require('../middleware/auth');
+} = require("../controllers/bloodBankController");
+const { protect, approvedBloodBankOnly } = require("../middleware/auth");
 
 // Public routes
-router.get('/', getAllBloodBanks);
-router.get('/:id/inventory', getInventory);
+router.get("/", getAllBloodBanks);
+router.get("/:id/inventory", getInventory);
 
 // Protected routes (blood bank only)
 router.use(protect);
 router.use(approvedBloodBankOnly);
 
-router.get('/profile', getProfile);
-router.put('/profile', updateProfile);
-router.put('/inventory', updateInventory);
-router.post('/verify-donation', verifyDonation);
+router.get("/profile", getProfile);
+router.put("/profile", updateProfile);
+router.put("/inventory", updateInventory);
+router.post("/verify-donation", verifyDonation);
 
 module.exports = router;

@@ -38,7 +38,10 @@ const DonationQRCode = () => {
 
       const pngFile = canvas.toDataURL("image/png");
       const downloadLink = document.createElement("a");
-      downloadLink.download = `blood-donation-qr-${user.name.replace(/\s+/g, "-")}.png`;
+      downloadLink.download = `blood-donation-qr-${user.name.replace(
+        /\s+/g,
+        "-"
+      )}.png`;
       downloadLink.href = pngFile;
       downloadLink.click();
 
@@ -75,7 +78,8 @@ const DonationQRCode = () => {
             </div>
 
             <p className="text-gray-600 mb-4 text-sm">
-              Show this QR code at any blood bank to verify your identity and record your donation
+              Show this QR code at any blood bank to verify your identity and
+              record your donation
             </p>
 
             <div className="bg-white p-6 rounded-lg border-2 border-gray-200 mb-4 flex justify-center">
@@ -94,11 +98,17 @@ const DonationQRCode = () => {
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
                 <span className="text-purple-800 font-medium">Blood Type:</span>
-                <span className="text-purple-900 font-bold text-lg">{user.bloodType}</span>
+                <span className="text-purple-900 font-bold text-lg">
+                  {user.bloodType}
+                </span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
-                <span className="text-purple-800 font-medium">Total Donations:</span>
-                <span className="text-purple-900 font-bold">{user.totalDonations || 0}</span>
+                <span className="text-purple-800 font-medium">
+                  Total Donations:
+                </span>
+                <span className="text-purple-900 font-bold">
+                  {user.totalDonations || 0}
+                </span>
               </div>
             </div>
 

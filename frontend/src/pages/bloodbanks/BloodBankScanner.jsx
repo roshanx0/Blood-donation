@@ -48,15 +48,17 @@ const BloodBankScanner = () => {
 
       // Fetch user details from backend to check eligibility
       const response = await axios.get(`/users/${qrData.userId}`);
-      
+
       if (response.data.success) {
         const donor = response.data.data;
-        
+
         // Check if donor can donate (90-day gap)
         if (donor.lastDonationDate) {
           const lastDonation = new Date(donor.lastDonationDate);
-          const daysSince = Math.floor((Date.now() - lastDonation) / (1000 * 60 * 60 * 24));
-          
+          const daysSince = Math.floor(
+            (Date.now() - lastDonation) / (1000 * 60 * 60 * 24)
+          );
+
           if (daysSince < 90) {
             const daysRemaining = 90 - daysSince;
             toast.error(
@@ -68,11 +70,11 @@ const BloodBankScanner = () => {
             return;
           }
         }
-        
+
         // Show donor info for confirmation
         setPendingDonor({
           ...donor,
-          qrData
+          qrData,
         });
         setBloodAmount(450); // Reset to default
         setShowScanner(false);
@@ -105,26 +107,25 @@ const BloodBankScanner = () => {
       });
 
       if (response.data.success) {
-        toast.success(
-          `✓ ${response.data.data.donor.name} donation recorded!`
-        );
+        toast.success(`✓ ${response.data.data.donor.name} donation recorded!`);
         setLastDonor(response.data.data);
-        
+
         // Add to recent donations list
-        setRecentDonations(prev => [{
-          ...response.data.data,
-          quantity: bloodAmount
-        }, ...prev.slice(0, 9)]);
-        
+        setRecentDonations((prev) => [
+          {
+            ...response.data.data,
+            quantity: bloodAmount,
+          },
+          ...prev.slice(0, 9),
+        ]);
+
         // Clear pending donor
         setPendingDonor(null);
         setBloodAmount(450);
       }
     } catch (error) {
       console.error("Donation recording error:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to record donation"
-      );
+      toast.error(error.response?.data?.message || "Failed to record donation");
     } finally {
       setConfirming(false);
     }
@@ -227,7 +228,8 @@ const BloodBankScanner = () => {
                     <span>{lastDonor.donor.phone}</span>
                   </div>
                   <div className="text-xs text-gray-600 mt-2">
-                    ✓ Donation recorded • Total Donations: {lastDonor.donor.totalDonations}
+                    ✓ Donation recorded • Total Donations:{" "}
+                    {lastDonor.donor.totalDonations}
                   </div>
                 </div>
               </div>
@@ -332,7 +334,9 @@ const BloodBankScanner = () => {
                   <div className="flex items-start space-x-3">
                     <Droplet className="h-5 w-5 text-purple-600 mt-0.5" />
                     <div className="flex-1">
-                      <div className="text-sm text-gray-600">Total Donations</div>
+                      <div className="text-sm text-gray-600">
+                        Total Donations
+                      </div>
                       <div className="font-semibold text-gray-900">
                         {pendingDonor.totalDonations || 0} donations
                       </div>
@@ -343,11 +347,20 @@ const BloodBankScanner = () => {
                     <div className="flex items-start space-x-3">
                       <Calendar className="h-5 w-5 text-purple-600 mt-0.5" />
                       <div className="flex-1">
-                        <div className="text-sm text-gray-600">Last Donation</div>
+                        <div className="text-sm text-gray-600">
+                          Last Donation
+                        </div>
                         <div className="font-semibold text-gray-900">
-                          {new Date(pendingDonor.lastDonationDate).toLocaleDateString()}
-                          {" "}
-                          ({Math.floor((Date.now() - new Date(pendingDonor.lastDonationDate)) / (1000 * 60 * 60 * 24))} days ago)
+                          {new Date(
+                            pendingDonor.lastDonationDate
+                          ).toLocaleDateString()}{" "}
+                          (
+                          {Math.floor(
+                            (Date.now() -
+                              new Date(pendingDonor.lastDonationDate)) /
+                              (1000 * 60 * 60 * 24)
+                          )}{" "}
+                          days ago)
                         </div>
                       </div>
                     </div>
@@ -366,7 +379,9 @@ const BloodBankScanner = () => {
                   max="500"
                   step="50"
                   value={bloodAmount}
-                  onChange={(e) => setBloodAmount(parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setBloodAmount(parseInt(e.target.value) || 0)
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg font-semibold"
                   placeholder="Enter amount in ml"
                 />
@@ -421,7 +436,9 @@ const BloodBankScanner = () => {
               <p className="font-semibold mb-1">Important Guidelines:</p>
               <ul className="list-disc list-inside space-y-1">
                 <li>Donors must wait 90 days (3 months) between donations</li>
-                <li>Each donation automatically updates blood bank inventory</li>
+                <li>
+                  Each donation automatically updates blood bank inventory
+                </li>
                 <li>Verify donor identity matches QR code information</li>
                 <li>Standard donation volume is 450ml</li>
               </ul>
