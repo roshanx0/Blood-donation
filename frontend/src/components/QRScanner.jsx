@@ -205,14 +205,28 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
 
   const stopScanner = async () => {
     try {
-      if (html5QrCodeRef.current && scanning) {
-        await html5QrCodeRef.current.stop();
-        html5QrCodeRef.current.clear();
+      if (html5QrCodeRef.current) {
+        // Attempt to stop the scanner even if `scanning` flag is false.
+        try {
+          await html5QrCodeRef.current.stop();
+        } catch (stopErr) {
+          // stop() can throw if already stopped; log and continue
+          console.warn("Scanner stop() threw:", stopErr);
+        }
+
+        try {
+          html5QrCodeRef.current.clear();
+        } catch (clearErr) {
+          console.warn("Scanner clear() threw:", clearErr);
+        }
+
         html5QrCodeRef.current = null;
-        setScanning(false);
       }
     } catch (err) {
       console.error("Error stopping scanner:", err);
+    } finally {
+      // Ensure UI state is consistent regardless of errors
+      setScanning(false);
     }
   };
 
