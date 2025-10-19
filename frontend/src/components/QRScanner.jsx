@@ -9,9 +9,17 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
   const [cameraList, setCameraList] = useState([]);
   const [isSecureContext, setIsSecureContext] = useState(true);
   const [processing, setProcessing] = useState(false); // Prevent duplicate scans
+  const [debugLogs, setDebugLogs] = useState([]); // Debug log overlay
   const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
   const lastScannedRef = useRef(null); // Track last scanned code
+
+  // Helper to add debug log
+  const addDebugLog = (message, type = "info") => {
+    const timestamp = new Date().toLocaleTimeString();
+    setDebugLogs((prev) => [...prev, { timestamp, message, type }].slice(-20)); // Keep last 20 logs
+    console.log(`[${timestamp}] ${message}`);
+  };
 
   // Check if we're in a secure context on mount
   useEffect(() => {
@@ -25,7 +33,12 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
       setIsSecureContext(hasMediaDevices);
 
       if (!hasMediaDevices && !isSecure) {
-        console.warn("Camera API not available. Not in secure context.");
+        addDebugLog(
+          "❌ Camera API not available. Not in secure context.",
+          "error"
+        );
+      } else if (hasMediaDevices) {
+        addDebugLog("✅ Camera API available", "success");
       }
     };
 
@@ -44,11 +57,14 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
     try {
       // Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setError(
-          "Camera API not supported. Please use a modern browser (Chrome, Safari, Firefox) or access via HTTPS."
-        );
+        const errMsg =
+          "Camera API not supported. Please use a modern browser (Chrome, Safari, Firefox) or access via HTTPS.";
+        setError(errMsg);
+        addDebugLog("❌ " + errMsg, "error");
         return false;
       }
+
+      addDebugLog("📷 Requesting camera permission...", "info");
 
       // Request camera permission explicitly
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -60,8 +76,13 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
       });
       // Permission granted, stop test stream
       stream.getTracks().forEach((track) => track.stop());
+      addDebugLog("✅ Camera permission granted", "success");
       return true;
     } catch (error) {
+      addDebugLog(
+        `❌ Camera permission error: ${error.name} - ${error.message}`,
+        "error"
+      );
       console.error("Camera permission error:", error);
 
       if (
@@ -95,43 +116,45 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
     try {
       setError(null);
       setPermissionDenied(false);
-      console.log("🎥 Starting QR scanner...");
+      addDebugLog("🎥 Starting QR scanner...", "info");
 
       // Check if scanner element exists
       if (!scannerRef.current) {
-        console.error("❌ Scanner element not found");
-        setError("Scanner element not found. Please refresh the page.");
+        const errMsg = "Scanner element not found. Please refresh the page.";
+        addDebugLog("❌ " + errMsg, "error");
+        setError(errMsg);
         return;
       }
 
-      console.log("✅ Scanner element found");
+      addDebugLog("✅ Scanner element found", "success");
 
       // First, request camera permission explicitly
       const hasPermission = await requestCameraPermission();
       if (!hasPermission) {
-        console.error("❌ Camera permission denied");
+        addDebugLog("❌ Camera permission denied", "error");
         return; // Error already set in requestCameraPermission
       }
 
-      console.log("✅ Camera permission granted");
-
       // Initialize scanner
       if (html5QrCodeRef.current) {
-        console.log("⚠️ Scanner already exists, stopping it first");
+        addDebugLog("⚠️ Scanner already exists, stopping it first", "warning");
         try {
           await html5QrCodeRef.current.stop();
           html5QrCodeRef.current.clear();
         } catch (e) {
-          console.log("Note: Error stopping existing scanner (ignored):", e);
+          addDebugLog(
+            `Note: Error stopping existing scanner (ignored): ${e.message}`,
+            "warning"
+          );
         }
       }
 
       html5QrCodeRef.current = new Html5Qrcode("qr-reader");
-      console.log("✅ Html5Qrcode instance created");
+      addDebugLog("✅ Html5Qrcode instance created", "success");
 
       // Get available cameras
       const cameras = await Html5Qrcode.getCameras();
-      console.log("📷 Available cameras:", cameras);
+      addDebugLog(`📷 Found ${cameras.length} camera(s)`, "success");
       setCameraList(cameras);
 
       if (cameras && cameras.length > 0) {
@@ -143,10 +166,8 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
             camera.label.toLowerCase().includes("environment")
         );
         const cameraId = backCamera ? backCamera.id : cameras[0].id;
-        console.log(
-          "📸 Selected camera:",
-          backCamera?.label || cameras[0].label
-        );
+        const cameraLabel = backCamera?.label || cameras[0].label;
+        addDebugLog(`📸 Selected camera: ${cameraLabel}`, "success");
 
         // Start scanning with better config
         await html5QrCodeRef.current.start(
@@ -159,9 +180,9 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
           },
           (decodedText) => {
             // Success callback
-            console.log(
-              "✅ QR Code detected:",
-              decodedText.substring(0, 50) + "..."
+            addDebugLog(
+              `✅ QR Code detected: ${decodedText.substring(0, 30)}...`,
+              "success"
             );
             handleScanSuccess(decodedText);
           },
@@ -441,6 +462,40 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
               Close
             </button>
           </div>
+
+          {/* Debug Log Overlay */}
+          {debugLogs.length > 0 && (
+            <div className="mt-4 bg-gray-900 rounded-lg p-3 max-h-48 overflow-y-auto">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-xs font-bold text-white">Debug Logs</h4>
+                <button
+                  onClick={() => setDebugLogs([])}
+                  className="text-xs text-gray-400 hover:text-white"
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="space-y-1 font-mono text-xs">
+                {debugLogs.map((log, index) => (
+                  <div
+                    key={index}
+                    className={`${
+                      log.type === "error"
+                        ? "text-red-400"
+                        : log.type === "success"
+                        ? "text-green-400"
+                        : log.type === "warning"
+                        ? "text-yellow-400"
+                        : "text-gray-300"
+                    }`}
+                  >
+                    <span className="text-gray-500">[{log.timestamp}]</span>{" "}
+                    {log.message}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
