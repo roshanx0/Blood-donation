@@ -8,8 +8,10 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [cameraList, setCameraList] = useState([]);
   const [isSecureContext, setIsSecureContext] = useState(true);
+  const [processing, setProcessing] = useState(false); // Prevent duplicate scans
   const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
+  const lastScannedRef = useRef(null); // Track last scanned code
 
   // Check if we're in a secure context on mount
   useEffect(() => {
@@ -185,8 +187,27 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
   };
 
   const handleScanSuccess = async (decodedText) => {
+    // Prevent multiple scans - only process if currently scanning and not already processing
+    if (!scanning || processing) {
+      return;
+    }
+
+    // Check if this is a duplicate scan (same code within 2 seconds)
+    const now = Date.now();
+    if (
+      lastScannedRef.current?.code === decodedText &&
+      now - lastScannedRef.current?.timestamp < 2000
+    ) {
+      return; // Ignore duplicate scan
+    }
+
     try {
+      // Mark as processing and update last scanned
+      setProcessing(true);
+      lastScannedRef.current = { code: decodedText, timestamp: now };
+
       // Stop scanner immediately after successful scan
+      setScanning(false); // Set state immediately to prevent re-entry
       await stopScanner();
 
       // Parse QR data
@@ -194,16 +215,15 @@ const QRScanner = ({ onScanSuccess, onClose, isOpen }) => {
 
       // Call parent callback
       if (onScanSuccess) {
-        onScanSuccess(qrData);
+        await onScanSuccess(qrData);
       }
     } catch (err) {
       console.error("Error processing QR code:", err);
       setError("Invalid QR code format");
-      // Restart scanner after error
-      setTimeout(() => {
-        setError(null);
-        startScanner();
-      }, 2000);
+      setScanning(false);
+      // Don't auto-restart on error
+    } finally {
+      setProcessing(false);
     }
   };
 
