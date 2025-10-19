@@ -6,6 +6,7 @@ const {
   getAllBloodBanks,
   getProfile,
   updateProfile,
+  verifyDonation,
 } = require('../controllers/bloodBankController');
 const { protect, approvedBloodBankOnly } = require('../middleware/auth');
 
@@ -20,5 +21,6 @@ router.use(approvedBloodBankOnly);
 router.get('/profile', getProfile);
 router.put('/profile', updateProfile);
 router.put('/inventory', updateInventory);
+router.post('/verify-donation', verifyDonation);
 
 module.exports = router;

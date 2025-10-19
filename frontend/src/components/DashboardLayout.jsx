@@ -16,6 +16,7 @@ import {
   Bell,
   ChevronLeft,
   CheckCircle,
+  QrCode,
 } from "lucide-react";
 
 const DashboardLayout = ({ children, activeTab, userType }) => {
@@ -92,6 +93,12 @@ const DashboardLayout = ({ children, activeTab, userType }) => {
             label: "Overview",
             icon: Home,
             path: "/bloodbank/dashboard",
+          },
+          {
+            id: "scanner",
+            label: "Scan Donation",
+            icon: QrCode,
+            path: "/bloodbank/scan-donation",
           },
           {
             id: "profile",

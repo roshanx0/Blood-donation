@@ -10,6 +10,7 @@ const {
   getDonationHistory,
   addDonationRecord,
   logout,
+  getUserById,
 } = require("../controllers/authController");
 const { protect } = require("../middleware/auth");
 
@@ -24,6 +25,9 @@ router.post("/login/bloodbank", loginBloodBank);
 // Common routes
 router.get("/me", protect, getMe);
 router.put("/profile", protect, updateProfile);
+
+// Get user by ID (for blood banks to view donor info)
+router.get("/users/:id", protect, getUserById);
 
 // Donation history routes (Users only)
 router.get("/donation-history", protect, getDonationHistory);

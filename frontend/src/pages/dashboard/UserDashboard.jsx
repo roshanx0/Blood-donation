@@ -23,6 +23,7 @@ import BloodTypeBadge from "../../components/BloodTypeBadge";
 import UrgencyBadge from "../../components/UrgencyBadge";
 import StatusBadge from "../../components/StatusBadge";
 import Loader from "../../components/Loader";
+import DonationQRCode from "../../components/DonationQRCode";
 
 const UserDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -88,6 +89,11 @@ const UserDashboard = () => {
             color="green"
             subtitle="Successfully completed"
           />
+        </div>
+
+        {/* Donation QR Code Button */}
+        <div className="max-w-md">
+          <DonationQRCode />
         </div>
 
         {/* Quick Actions */}

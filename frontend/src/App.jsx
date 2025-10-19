@@ -62,6 +62,7 @@ import MyRequests from "./pages/requests/MyRequests";
 
 // Blood Bank Pages
 import BloodBankList from "./pages/bloodbanks/BloodBankList";
+import BloodBankScanner from "./pages/bloodbanks/BloodBankScanner";
 
 // Admin Pages
 import ManageUsers from "./pages/admin/ManageUsers";
@@ -248,6 +249,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["bloodbank"]}>
                 <BloodBankProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/bloodbank/scan-donation"
+            element={
+              <ProtectedRoute allowedRoles={["bloodbank"]}>
+                <BloodBankScanner />
               </ProtectedRoute>
             }
           />
