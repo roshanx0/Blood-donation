@@ -18,7 +18,10 @@ import {
   CheckCircle2,
   AlertCircle,
   Calendar,
+  Smartphone,
+  QrCode,
 } from "lucide-react";
+import QRCode from "react-qr-code";
 import Card from "../components/Card";
 import PageTransition from "../components/PageTransition";
 
@@ -215,24 +218,24 @@ const Home = () => {
                   Become a Donor
                 </Link>
               </motion.div>
-            </div>
 
-            {/* Quick Links */}
-            <div className="mt-8 flex flex-wrap gap-4 text-sm">
-              <Link
-                to="/blood-banks"
-                className="text-red-100 hover:text-white underline-offset-4 hover:underline transition-colors"
-              >
-                <Search className="inline h-4 w-4 mr-1" />
-                Find Blood Banks
-              </Link>
-              <Link
-                to="/requests"
-                className="text-red-100 hover:text-white underline-offset-4 hover:underline transition-colors"
-              >
-                <Activity className="inline h-4 w-4 mr-1" />
-                View Active Requests
-              </Link>
+              {/* Quick Links */}
+              <div className="mt-8 flex flex-wrap gap-4 text-sm">
+                <Link
+                  to="/blood-banks"
+                  className="text-red-100 hover:text-white underline-offset-4 hover:underline transition-colors"
+                >
+                  <Search className="inline h-4 w-4 mr-1" />
+                  Find Blood Banks
+                </Link>
+                <Link
+                  to="/requests"
+                  className="text-red-100 hover:text-white underline-offset-4 hover:underline transition-colors"
+                >
+                  <Activity className="inline h-4 w-4 mr-1" />
+                  View Active Requests
+                </Link>
+              </div>
             </div>
           </div>
         </section>

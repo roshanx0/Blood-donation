@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
-import { Droplet, Heart, Phone, Mail, MapPin } from "lucide-react";
+import { Droplet, Heart, Phone, Mail, MapPin, Smartphone } from "lucide-react";
+import QRCode from "react-qr-code";
 
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white mt-auto border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* About Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2.5">
@@ -105,6 +106,28 @@ const Footer = () => {
                 </span>
               </li>
             </ul>
+          </div>
+
+          {/* QR Code Section */}
+          <div className="flex flex-col items-center md:items-start">
+            <h3 className="text-lg font-semibold mb-4">Quick Access</h3>
+            <div className="bg-white p-4 rounded-xl shadow-lg">
+              <QRCode
+                value="https://blood-donation-two-gold.vercel.app/"
+                size={120}
+                level="H"
+                className="w-full h-auto"
+              />
+            </div>
+            <div className="mt-3 text-center md:text-left">
+              <div className="flex items-center gap-2 mb-1">
+                <Smartphone className="h-4 w-4 text-red-400" />
+                <p className="text-sm font-semibold text-gray-300">
+                  Scan QR Code
+                </p>
+              </div>
+              <p className="text-xs text-gray-500">Access on mobile</p>
+            </div>
           </div>
         </div>
 
