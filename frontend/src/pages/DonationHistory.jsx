@@ -12,6 +12,7 @@ import {
   Award,
   Plus,
   TrendingUp,
+  Download,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -60,6 +61,122 @@ const DonationHistory = () => {
   };
 
   const badge = getAchievementBadge();
+
+  // Generate and download certificate
+  const downloadCertificate = (donation) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 800;
+    const ctx = canvas.getContext("2d");
+
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, 1200, 800);
+    gradient.addColorStop(0, "#FEE2E2");
+    gradient.addColorStop(1, "#FECACA");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 1200, 800);
+
+    // Border
+    ctx.strokeStyle = "#DC2626";
+    ctx.lineWidth = 10;
+    ctx.strokeRect(30, 30, 1140, 740);
+
+    // Inner border
+    ctx.strokeStyle = "#EF4444";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(50, 50, 1100, 700);
+
+    // Title
+    ctx.fillStyle = "#991B1B";
+    ctx.font = "bold 60px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("CERTIFICATE OF APPRECIATION", 600, 150);
+
+    // Subtitle
+    ctx.font = "italic 28px Arial";
+    ctx.fillStyle = "#B91C1C";
+    ctx.fillText("Blood Donation Certificate", 600, 200);
+
+    // Red cross symbol
+    ctx.fillStyle = "#DC2626";
+    ctx.fillRect(570, 230, 20, 60);
+    ctx.fillRect(550, 250, 60, 20);
+
+    // Main text
+    ctx.font = "24px Arial";
+    ctx.fillStyle = "#374151";
+    ctx.fillText("This is to certify that", 600, 330);
+
+    // Donor name
+    ctx.font = "bold 42px Arial";
+    ctx.fillStyle = "#1F2937";
+    ctx.fillText(user.name.toUpperCase(), 600, 390);
+
+    // Details
+    ctx.font = "24px Arial";
+    ctx.fillStyle = "#374151";
+    ctx.fillText("has donated blood on", 600, 450);
+
+    // Date
+    ctx.font = "bold 32px Arial";
+    ctx.fillStyle = "#DC2626";
+    const donationDate = new Date(donation.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    ctx.fillText(donationDate, 600, 500);
+
+    // Location
+    ctx.font = "22px Arial";
+    ctx.fillStyle = "#6B7280";
+    ctx.fillText(`at ${donation.location}`, 600, 540);
+
+    // Blood type and quantity
+    ctx.font = "bold 26px Arial";
+    ctx.fillStyle = "#991B1B";
+    ctx.fillText(
+      `Blood Type: ${donation.bloodType} | Quantity: ${donation.quantity}ml`,
+      600,
+      590
+    );
+
+    // Appreciation message
+    ctx.font = "italic 20px Arial";
+    ctx.fillStyle = "#4B5563";
+    ctx.fillText("Your generous donation can save up to 3 lives", 600, 640);
+
+    // Footer
+    ctx.font = "18px Arial";
+    ctx.fillStyle = "#6B7280";
+    ctx.fillText("Thank you for being a life saver!", 600, 680);
+
+    // Signature line
+    ctx.strokeStyle = "#9CA3AF";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(800, 720);
+    ctx.lineTo(1000, 720);
+    ctx.stroke();
+
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#6B7280";
+    ctx.fillText("Authorized Signature", 900, 740);
+
+    // Convert to image and download
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = `Blood_Donation_Certificate_${user.name.replace(
+        /\s+/g,
+        "_"
+      )}_${new Date(donation.date).toISOString().split("T")[0]}.png`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success("Certificate downloaded successfully!");
+    });
+  };
 
   if (isLoading) {
     return (
@@ -185,6 +302,16 @@ const DonationHistory = () => {
                           "{donation.notes}"
                         </p>
                       )}
+                    </div>
+                    <div className="ml-4">
+                      <button
+                        onClick={() => downloadCertificate(donation)}
+                        className="flex items-center space-x-2 bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-red-800 transition-all shadow-md hover:shadow-lg"
+                        title="Download Certificate"
+                      >
+                        <Download className="h-4 w-4" />
+                        <span className="font-medium">Certificate</span>
+                      </button>
                     </div>
                   </div>
                 </div>

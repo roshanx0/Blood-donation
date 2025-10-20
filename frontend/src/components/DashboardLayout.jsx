@@ -151,6 +151,18 @@ const DashboardLayout = ({ children, activeTab, userType }) => {
             icon: Bell,
             path: "/camps",
           },
+          {
+            id: "blood-banks",
+            label: "Blood Banks",
+            icon: Building2,
+            path: "/blood-banks",
+          },
+          {
+            id: "all-requests",
+            label: "All Requests",
+            icon: FileText,
+            path: "/requests",
+          },
         ];
       default:
         return [];
