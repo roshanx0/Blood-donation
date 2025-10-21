@@ -3,14 +3,12 @@ import { useSelector } from "react-redux";
 import axios from "../utils/axios";
 import Card from "../components/Card";
 import Loader from "../components/Loader";
-import AddDonationModal from "../components/AddDonationModal";
 import DashboardLayout from "../components/DashboardLayout";
 import {
   Calendar,
   MapPin,
   Droplet,
   Award,
-  Plus,
   TrendingUp,
   Download,
 } from "lucide-react";
@@ -20,7 +18,6 @@ const DonationHistory = () => {
   const { user } = useSelector((state) => state.auth);
   const [donations, setDonations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     fetchDonations();
@@ -37,11 +34,6 @@ const DonationHistory = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleAddDonation = () => {
-    setShowAddModal(false);
-    fetchDonations();
   };
 
   // Calculate statistics
@@ -196,16 +188,9 @@ const DonationHistory = () => {
               Donation History
             </h1>
             <p className="text-gray-600 mt-1">
-              Track your blood donation journey
+              Track your blood donation journey. Donations are recorded by blood banks and camp organizers.
             </p>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Add Donation</span>
-          </button>
         </div>
 
         {/* Statistics Cards */}
@@ -249,14 +234,11 @@ const DonationHistory = () => {
               No Donations Yet
             </h3>
             <p className="text-gray-500 mb-6">
-              Start your life-saving journey by recording your first donation
+              Your donations will be recorded here when you donate at blood banks or camps
             </p>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Add Your First Donation
-            </button>
+            <p className="text-sm text-gray-400">
+              Visit a blood bank or register for a blood camp to start your life-saving journey!
+            </p>
           </Card>
         ) : (
           <Card>
@@ -320,13 +302,6 @@ const DonationHistory = () => {
           </Card>
         )}
       </div>
-
-      {/* Add Donation Modal */}
-      <AddDonationModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onSuccess={handleAddDonation}
-      />
     </DashboardLayout>
   );
 };

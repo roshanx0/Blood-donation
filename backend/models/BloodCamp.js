@@ -140,12 +140,11 @@ bloodCampSchema.methods.isUserRegistered = function (userId) {
 
 // Auto-update status based on date and time
 bloodCampSchema.methods.updateStatus = function () {
-  const now = new Date();
   const campDate = new Date(this.date);
-
-  // Set to start of camp day
-  campDate.setHours(0, 0, 0, 0);
   const today = new Date();
+
+  // Set both to start of day for proper comparison
+  campDate.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
 
   // Don't change if manually set to cancelled
@@ -153,16 +152,19 @@ bloodCampSchema.methods.updateStatus = function () {
     return this.status;
   }
 
+  const campTime = campDate.getTime();
+  const todayTime = today.getTime();
+
   // If camp date has passed (not today), mark as completed
-  if (campDate < today) {
+  if (campTime < todayTime) {
     this.status = "completed";
   }
   // If camp is today, mark as ongoing
-  else if (campDate.getTime() === today.getTime()) {
+  else if (campTime === todayTime) {
     this.status = "ongoing";
   }
   // If camp is in the future, mark as upcoming
-  else if (campDate > today) {
+  else {
     this.status = "upcoming";
   }
 

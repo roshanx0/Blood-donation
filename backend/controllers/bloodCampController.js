@@ -161,10 +161,15 @@ exports.getAllBloodCamps = async (req, res) => {
       .populate("bloodBankPartner", "name phone address")
       .sort({ date: 1 });
 
-    // Update status for each camp based on current date
-    camps.forEach((camp) => {
+    // Update status for each camp based on current date and save
+    for (const camp of camps) {
+      const oldStatus = camp.status;
       camp.updateStatus();
-    });
+      // Save to database if status changed
+      if (oldStatus !== camp.status) {
+        await camp.save({ validateBeforeSave: false });
+      }
+    }
 
     // Apply status filter AFTER updating statuses
     if (status) {
@@ -202,8 +207,12 @@ exports.getBloodCampById = async (req, res) => {
       });
     }
 
-    // Update status based on current date
+    // Update status based on current date and save
+    const oldStatus = camp.status;
     camp.updateStatus();
+    if (oldStatus !== camp.status) {
+      await camp.save({ validateBeforeSave: false });
+    }
 
     res.status(200).json({
       success: true,
@@ -238,6 +247,9 @@ exports.registerForCamp = async (req, res) => {
         message: "This camp is not approved yet",
       });
     }
+
+    // Update status based on current date
+    camp.updateStatus();
 
     if (camp.status === "completed" || camp.status === "cancelled") {
       return res.status(400).json({
@@ -301,6 +313,9 @@ exports.unregisterFromCamp = async (req, res) => {
         message: "You are not registered for this camp",
       });
     }
+
+    // Update status based on current date
+    camp.updateStatus();
 
     // Don't allow unregistering from completed or ongoing camps
     if (camp.status === "completed") {

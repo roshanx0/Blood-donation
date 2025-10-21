@@ -3,6 +3,13 @@ import { X, Calendar, MapPin, Droplet, FileText } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "../utils/axios";
 
+/**
+ * @deprecated This component is no longer used.
+ * Users cannot manually add donation records.
+ * Donations are only recorded by:
+ * - Blood banks via QR code scanning
+ * - Camp organizers via attendance verification
+ */
 const AddDonationModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     location: "",

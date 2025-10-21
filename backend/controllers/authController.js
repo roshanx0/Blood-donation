@@ -316,21 +316,38 @@ exports.getDonationHistory = async (req, res) => {
   }
 };
 
-// @desc    Add donation record
+// @desc    Add donation record (RESTRICTED - Only for blood banks/organizations)
 // @route   POST /api/auth/donation-history
-// @access  Private (Users only)
+// @access  Private (Blood Banks and Organizations only - NOT for users)
+// Note: This function should not be exposed to regular users
+// Donations should only be recorded via blood bank QR scanning or camp attendance verification
 exports.addDonationRecord = async (req, res) => {
   try {
+    // Prevent regular users from manually adding donation records
+    if (req.userType === "user") {
+      return res.status(403).json({
+        success: false,
+        message: "Users cannot manually add donation records. Donations must be verified by blood banks or camp organizers.",
+      });
+    }
+
     const DonationHistory = require("../models/DonationHistory");
-    const { location, date, quantity, bloodType, notes, campId, bloodBankId } =
+    const { userId, location, date, quantity, bloodType, notes, campId, bloodBankId } =
       req.body;
 
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
     const donation = await DonationHistory.create({
-      userId: req.user._id,
+      userId: userId,
       location,
       date: date || Date.now(),
       quantity: quantity || 450,
-      bloodType: bloodType || req.user.bloodType,
+      bloodType: bloodType,
       notes,
       campId,
       bloodBankId,

@@ -8,7 +8,6 @@ const {
   getMe,
   updateProfile,
   getDonationHistory,
-  addDonationRecord,
   logout,
   getUserById,
 } = require("../controllers/authController");
@@ -31,7 +30,8 @@ router.get("/users/:id", protect, getUserById);
 
 // Donation history routes (Users only)
 router.get("/donation-history", protect, getDonationHistory);
-router.post("/donation-history", protect, addDonationRecord);
+// Note: Users cannot manually add donation records
+// Donations are only recorded by blood banks or camp organizers
 
 router.post("/logout", protect, logout);
 
