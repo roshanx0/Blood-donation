@@ -1,49 +1,61 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../redux/slices/authSlice";
-import { Mail, Lock, LogIn, Droplet } from "lucide-react";
-import ErrorMessage from "../../components/ErrorMessage";
+import axios from "../../utils/axios";
+import { setCredentials } from "../../redux/slices/authSlice";
+import { Mail, Lock, LogIn, Droplet, AlertCircle } from "lucide-react";
 
 const UserLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { isLoading, isAuthenticated, user } = useSelector(
-    (state) => state.auth
-  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Get the page user was trying to access before login
-  const from = location.state?.from?.pathname || null;
-
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      // Redirect to the page they were trying to access, or dashboard
-      if (from) {
-        navigate(from, { replace: true });
-      } else if (user.role === "admin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/user/dashboard");
-      }
-    }
-  }, [isAuthenticated, user, navigate, from]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user types
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await dispatch(loginUser(formData));
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post("/auth/login/user", formData);
+
+      // Store in redux and localStorage
+      dispatch(
+        setCredentials({
+          user: response.data.user,
+          token: response.data.token,
+        })
+      );
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      // Navigate based on role
+      if (response.data.user.role === "admin") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/user/dashboard", { replace: true });
+      }
+    } catch (err) {
+      const message =
+        err.response?.data?.message || "Invalid email or password";
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -63,6 +75,14 @@ const UserLogin = () => {
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700 font-medium">{error}</p>
+              </div>
+            )}
+
             {/* Email */}
             <div>
               <label htmlFor="email" className="label">

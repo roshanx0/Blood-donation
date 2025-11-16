@@ -1,52 +1,58 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { Building2, Mail, Lock } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import axios from "../../utils/axios";
+import { setCredentials } from "../../redux/slices/authSlice";
+import { Building2, Mail, Lock, AlertCircle } from "lucide-react";
 import Card from "../../components/Card";
-import ErrorMessage from "../../components/ErrorMessage";
-import { loginOrganization } from "../../redux/slices/authSlice";
 
 const OrganizationLogin = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useDispatch();
-  const { isLoading, isAuthenticated, userType } = useSelector(
-    (state) => state.auth
-  );
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  // Get the page user was trying to access before login
-  const from = location.state?.from?.pathname || null;
-
-  useEffect(() => {
-    // Redirect if already logged in as organization
-    if (isAuthenticated && userType === "organization") {
-      if (from) {
-        navigate(from, { replace: true });
-      } else {
-        navigate("/organization/dashboard");
-      }
-    }
-  }, [isAuthenticated, userType, navigate, from]);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error when user types
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(loginOrganization(formData));
+    setError("");
+    setIsLoading(true);
 
-    if (result.type === "auth/loginOrganization/fulfilled") {
-      if (from) {
-        navigate(from, { replace: true });
-      } else {
-        navigate("/organization/dashboard");
-      }
+    try {
+      const response = await axios.post("/auth/organization/login", formData);
+
+      // Store in redux and localStorage
+      dispatch(
+        setCredentials({
+          user: response.data.data.organization,
+          token: response.data.data.token,
+        })
+      );
+      localStorage.setItem("token", response.data.data.token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(response.data.data.organization)
+      );
+
+      // Navigate to dashboard
+      navigate("/organization/dashboard", { replace: true });
+    } catch (err) {
+      // This 401 error is expected for wrong credentials - don't log it
+      const message =
+        err.response?.data?.message || "Invalid email or password";
+      setError(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,6 +71,14 @@ const OrganizationLogin = () => {
 
         <Card>
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700 font-medium">{error}</p>
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-bold text-gray-900 mb-2">
                 Email Address

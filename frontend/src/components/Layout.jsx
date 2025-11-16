@@ -8,6 +8,12 @@ const Layout = () => {
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
 
+  // Auth pages that should NOT show navbar/footer
+  const authPages = ["/login", "/register"];
+  const isAuthPage = authPages.some((page) =>
+    location.pathname.startsWith(page)
+  );
+
   // Pages that should NOT show navbar/footer when user is logged in
   const dashboardAccessiblePages = ["/blood-banks", "/camps", "/requests"];
 
@@ -16,8 +22,8 @@ const Layout = () => {
     user &&
     dashboardAccessiblePages.some((page) => location.pathname.startsWith(page));
 
-  // Show navbar/footer only on home or auth pages, or when not logged in
-  const showNavbarFooter = !isDashboardView;
+  // Show navbar/footer only when NOT on auth pages and NOT in dashboard view
+  const showNavbarFooter = !isAuthPage && !isDashboardView;
 
   return (
     <div className="flex flex-col min-h-screen">

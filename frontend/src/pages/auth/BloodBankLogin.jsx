@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { loginBloodBank } from "../../redux/slices/authSlice";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import axios from "../../utils/axios";
+import { setCredentials } from "../../redux/slices/authSlice";
 import { Mail, Lock, LogIn, Building2, AlertCircle } from "lucide-react";
 
 const BloodBankLogin = () => {
@@ -9,35 +10,47 @@ const BloodBankLogin = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { isLoading, isAuthenticated, userType, error } = useSelector(
-    (state) => state.auth
-  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Get the page user was trying to access before login
-  const from = location.state?.from?.pathname || null;
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user types
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(loginBloodBank(formData));
+    setError("");
+    setIsLoading(true);
 
-    // Only navigate if login was successful
-    if (result.type === "auth/loginBloodBank/fulfilled") {
-      if (from) {
-        navigate(from, { replace: true });
-      } else {
-        navigate("/bloodbank/dashboard");
-      }
+    try {
+      const response = await axios.post("/auth/login/bloodbank", formData);
+
+      // Store in redux and localStorage
+      dispatch(
+        setCredentials({
+          user: response.data.user,
+          token: response.data.token,
+        })
+      );
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      // Navigate to dashboard
+      navigate("/bloodbank/dashboard", { replace: true });
+    } catch (err) {
+      const message =
+        err.response?.data?.message || "Invalid email or password";
+      setError(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
