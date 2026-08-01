@@ -1,6 +1,6 @@
 ﻿# Blood Donation System
 
-Built as a college mini-project @cce for academic learning and demonstration purposes.
+Built as a college mini-project @cce 
 
 A full-stack web application for managing blood donation activities, connecting donors, blood banks, organizations, and administrators in one platform.
 
@@ -64,6 +64,4 @@ Create local environment files using the provided examples:
 - backend/.env.example
 - frontend/.env.example
 
-## License
 
-This project is for educational and demonstration purposes.
